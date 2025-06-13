@@ -1,0 +1,27 @@
+<div class="header">
+    <div style="display: flex; align-items: center;">
+      <img src="" alt="Icono"> <!-- Asegúrate de tener un ícono -->
+      <h1>Bienvenido user</h1>
+    </div>
+    <button  (click)="cerrarSesion()">Cerrar Sesión</button>
+  </div>
+
+  <div class="nav-buttons">
+    <button>Inicio</button>
+    <button [routerLink]="['/miperfil']">Mi perfil</button>
+  </div>
+
+  <div class="section">
+    <h2>CITAS</h2>
+    <button [routerLink]="['/reservarcita']">Reservar cita</button>
+
+    <div class="card">
+      <span>Ver citas programadas</span>
+      <button>&gt;</button>
+    </div>
+
+    <div class="card">
+      <span>Atenciones realizadas</span>
+      <button>&gt;</button>
+    </div>
+  </div>

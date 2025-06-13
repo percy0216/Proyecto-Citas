@@ -1,0 +1,52 @@
+.login-bg {
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  background-size: cover;
+  background-position: center;
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.15);
+}
+
+.form-label {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+input.form-control {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+}
+
+input.form-control:focus {
+  border-color: #2a5298;
+  box-shadow: 0 0 0 0.2rem rgba(42, 82, 152, 0.25);
+}
+
+.custom-btn {
+  background-color: #2a5298 !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  padding: 0.6rem 0 !important;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.custom-btn:hover {
+  background-color: #1e3c72 !important;
+}
+
+@media (max-width: 576px) {
+  p-card {
+    padding: 0 !important;
+  }
+
+  .p-card .p-card-body {
+    padding: 1.5rem !important;
+  }
+}
