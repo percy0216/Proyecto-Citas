@@ -163,4 +163,3 @@ class HistorialMedico(models.Model):
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     observaciones = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
-

@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CitaSerializers
+from .serializers import PacienteRegistroSerializer
 
 class ReservarCitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -35,40 +36,34 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({"token": token.key})
+            return Response({
+                "token": token.key,
+                'usuario': {
+                'id': user.id,
+                'username': user.username,
+                'first_name': user.nombre,
+                'last_name': user.apellido,
+                'email': user.email,
+                'dni': user.dni,
+                'telefono': user.telefono,
+                'tipo_usuario': user.tipo_usuario
+                }
+            })
         else:
             return Response({"error": "Credenciales Invalidas"}, status=400)
         
 
-User = get_user_model()
 @method_decorator(csrf_exempt, name='dispatch')
-class RegistroView(APIView):
+class RegistroPacienteView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        data = request.data
+        serializer = PacienteRegistroSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'mensaje': 'Paciente registrado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            # Crea el usuario con campos requeridos
-            user = User.objects.create_user(
-                username=data.get('username'),
-                email=data.get('correo'),
-                password=data.get('password')
-            )
-
-            # Asigna campos personalizados
-            user.nombre = data.get('nombre')
-            user.apellido = data.get('apellido')
-            user.dni = data.get('dni')
-            user.telefono = data.get('telefono')
-            user.tipo_usuario = 'paciente'  # Fijo
-
-            user.save()
-
-            return Response({"mensaje": "Usuario creado correctamente"}, status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
