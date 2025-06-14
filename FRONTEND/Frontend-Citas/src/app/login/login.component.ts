@@ -19,8 +19,9 @@ export class LoginComponent {
   login() {
     this.auth.login(this.username, this.password).subscribe({
       next: (res: any) => {
-         console.log('Respuesta del backend:', res);
+        console.log('Respuesta del backend:', res);
         localStorage.setItem('token', res.token);
+        localStorage.setItem('usuario', JSON.stringify(res.usuario));
         this.router.navigate(['/home']);
       },
       error: () => {

@@ -1,1 +1,46 @@
-<p>miperfil works!</p>
+
+<div class="header">
+    <div style="display: flex; align-items: center;">
+       
+      <h1>Mi perfil</h1>
+    </div>
+    <button  (click)="cerrarSesion()">Cerrar Sesión</button>
+  </div>
+
+  <div class="nav-buttons">
+    <button [routerLink]="['/home']">Inicio</button>
+    <button [routerLink]="['/miperfil']">Mi perfil</button>
+  </div>
+
+  <br>
+
+<form [formGroup]="perfilForm" class="p-fluid p-formgrid p-grid">
+
+  <div class="p-field p-col-12 p-md-6">
+    <label for="first_name">Nombre</label>
+    <input id="first_name" type="text" pInputText formControlName="first_name" />
+  </div> <br>
+
+  <div class="p-field p-col-12 p-md-6">
+    <label for="last_name">Apellido</label>
+    <input id="last_name" type="text" pInputText formControlName="last_name" />
+  </div> <br>
+
+  <div class="p-field p-col-12 p-md-6">
+    <label for="email">Correo</label>
+    <input id="email" type="email" pInputText formControlName="email" />
+  </div> <br>
+
+  <div class="p-field p-col-12 p-md-6">
+    <label for="dni">DNI</label>
+    <input id="dni" type="text" pInputText formControlName="dni" />
+  </div> <br>
+ 
+  <div class="p-field p-col-12 p-md-6">
+    <label for="telefono">Teléfono</label>
+    <input id="telefono" type="text" pInputText formControlName="telefono" />
+  </div> <br>
+
+  <p-button label="Atras" severity="info" [routerLink]="['/home']" />
+  
+</form>

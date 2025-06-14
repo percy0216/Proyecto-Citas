@@ -1,1 +1,18 @@
-<p>reservarcita works!</p>
+<form [formGroup]="citaForm" (ngSubmit)="registrar()">
+  <label>Fecha:</label>
+  <input type="date" formControlName="fecha" /><br />
+
+  <label>Hora:</label>
+  <input type="time" formControlName="hora" /><br />
+
+  <label>Especialidad:</label>
+  <input type="number" formControlName="especialidad" /><br />
+
+  <label>Médico:</label>
+  <input type="number" formControlName="medico" /><br />
+
+  <label>Paciente:</label>
+  <input type="number" formControlName="paciente" /><br /><br />
+
+  <button type="submit" [disabled]="citaForm.invalid">Registrar Cita</button> 
+</form>
