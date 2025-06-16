@@ -22,8 +22,8 @@ export class TokenInterceptor implements HttpInterceptor {
         setHeaders: {
           'X-API-KEY' : 'iEpeJsgQbWzbNEirdKEWnYPf'
         }
-      });
-    }
+      });
+    }
 
     return next.handle(req);
   }

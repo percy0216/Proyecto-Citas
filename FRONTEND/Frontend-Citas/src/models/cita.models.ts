@@ -6,7 +6,7 @@ export interface Cita {
   id: number;
   fecha: string | Date;
   hora: string;
-  estado: 'pendiente' | 'confirmada' | 'cancelada' | 'atendida';
+  estado?: string;
   especialidad: Especialidad; 
   paciente: Paciente;         
   medico: Medico;             

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,16 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
 
+  usuario: any;
+
   constructor(private auth: AuthService, private router: Router) {}
+
+  ngOnInit() {
+    const data = localStorage.getItem('usuario');
+    if (data) {
+      this.usuario = JSON.parse(data);
+    }
+  }
 
   cerrarSesion() {
   this.auth.logout();

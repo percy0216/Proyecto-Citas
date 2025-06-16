@@ -11,6 +11,20 @@ class PacienteSerializers(serializers.ModelSerializer):
         model = models.Paciente
         fields = '__all__'
 
+class PacienteRegistroSerializer(serializers.ModelSerializer):
+    usuario = UsuarioSerializers()  # anidamos el serializer de Usuario
+
+    class Meta:
+        model = models.Paciente
+        fields = ['usuario','fecha_nacimiento', 'direccion']  # agrega tus campos propios de Paciente
+
+    def create(self, validated_data):
+        usuario_data = validated_data.pop('usuario')
+        usuario_data['tipo_usuario'] = 'paciente'  # aseguramos que siempre sea paciente
+        user = models.Usuario.objects.create_user(**usuario_data)
+        paciente = models.Paciente.objects.create(usuario=user, **validated_data)
+        return paciente
+
 class EspecialidadSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Especialidad

@@ -20,6 +20,8 @@ export class RegistroComponent implements OnInit {
       dni: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
       telefono: [''],
+      fecha_nacimiento: ['', Validators.required],
+      direccion: ['', Validators.required],
       username: ['', Validators.required], 
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
@@ -27,18 +29,31 @@ export class RegistroComponent implements OnInit {
 
   registrar(): void {
   if (this.registroForm.valid) {
-    const datos = this.registroForm.value;
-    datos.tipo_usuario = 'paciente';
+    const datosForm = this.registroForm.value;
 
-    console.log('Datos enviados:', datos);
-    this.auth.registrar(datos).subscribe({
+    const datosPaciente = {
+      usuario: {
+        nombre: datosForm.nombre,
+        apellido: datosForm.apellido,
+        dni: datosForm.dni,
+        correo: datosForm.correo,
+        telefono: datosForm.telefono,
+        username: datosForm.username,
+        password: datosForm.password,
+        tipo_usuario: 'paciente'
+      },
+      fecha_nacimiento: datosForm.fecha_nacimiento,
+      direccion: datosForm.direccion
+    };
+
+    this.auth.registrar(datosPaciente).subscribe({
       next: (res) => {
-        console.log('Usuario registrado:', res);
-        alert('Usuario registrado correctamente');
+        console.log('Paciente registrado correctamente', res);
+        alert('Registro exitoso');
       },
       error: (err) => {
-        console.error('Error al registrar:', err);
-        alert('Error al registrar usuario');
+        console.error('Error al registrar paciente:', err);
+        alert('Error al registrar paciente');
       }
     });
   }
