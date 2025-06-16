@@ -1,19 +1,8 @@
 from django.contrib import admin
-from django.urls import path,include
-from rest_framework import routers
-from api import views
-
-# router = routers.DefaultRouter()
-# router.register('Usuario', views.UsuarioViewsets)
-# router.register('Paciente', views.PacienteViewsets)
-# router.register('Especialidad', views.EspecialidadViewsets)
-# router.register('Medico', views.MedicoViewsets)
-# router.register('Cita', views.CitaViewsets)
-# router.register('Registro Visitas', views.RegistroVisitasViewsets)
-# router.register('Administrador', views.AdministradorViewsets)
-# router.register('Historial Medico', views.HistorialMedicoViewsets)
-
+from django.urls import path, include
+from rest_framework import routers          # Importa los routers
+from api import views                      
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/',include('api.urls')),
+    path('admin/', admin.site.urls),    # Ruta para acceder al panel de administración de Django
+    path('api/', include('api.urls')),  # Incluye todas las rutas definidas en la app 'api'
 ]

@@ -1,28 +1,29 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+
+
+/* Aqui se configura el TypeScript y Angular */
 {
-  "compileOnSave": false,
+  "compileOnSave": false,                         // No recompila automáticamente al guardar archivos
   "compilerOptions": {
-    "strictPropertyInitialization": false,
-    "outDir": "./dist/out-tsc",
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "bundler",
-    "importHelpers": true,
-    "target": "ES2022",
-    "module": "ES2022"
+    "strictPropertyInitialization": false,        // Desactiva la verificación de inicialización en el constructor
+    "outDir": "./dist/out-tsc",                   // Carpeta de salida para los archivos compilados
+    "strict": true,                               // Habilita todas las opciones de verificación estricta
+    "noImplicitOverride": true,                   // Obliga a usar `override` al sobreescribir métodos
+    "noPropertyAccessFromIndexSignature": true,   // Previene el acceso no tipado a propiedades con índices
+    "noImplicitReturns": true,                    // Asegura que todas las funciones devuelvan un valor en todos los caminos
+    "noFallthroughCasesInSwitch": true,           // Previene que los `case` en `switch` se ejecuten sin `break`
+    "skipLibCheck": true,                         // Omite verificación de tipos en archivos de declaración `.d.ts`
+    "isolatedModules": true,                      // Asegura que cada archivo se pueda transpilar por separado
+    "esModuleInterop": true,                      // Permite importaciones compatibles entre CommonJS y ESModules
+    "experimentalDecorators": true,               // Habilita el uso de decoradores (necesario para Angular)
+    "moduleResolution": "bundler",                // Estrategia de resolución de módulos moderna (Angular 17+)
+    "importHelpers": true,                        // Reduce el tamaño del bundle usando helpers desde `tslib`
+    "target": "ES2022",                           // Nivel de JavaScript al que se compila el código TypeScript
+    "module": "ES2022"                            // Formato de módulos a usar en la salida compilada
   },
   "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "enableI18nLegacyMessageIdFormat": false,   // Usa un nuevo formato para los ID de mensajes i18n
+    "strictInjectionParameters": true,          // Fuerza tipos estrictos en la inyección de dependencias
+    "strictInputAccessModifiers": true,         // Requiere que las entradas (@Input) tengan modificadores explícitos
+    "strictTemplates": true                     // Aplica reglas estrictas en las plantillas HTML de Angular
   }
 }

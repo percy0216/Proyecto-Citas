@@ -1,21 +1,24 @@
 from django.shortcuts import render
-from . import models,serializers
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
-from rest_framework import status
-from django.contrib.auth import get_user_model
+from . import models, serializers                       # Importa los models y serializadores 
+from rest_framework import viewsets                     # Para crear vistas basadas en ViewSets
+from rest_framework.response import Response            # Para enviar respuestas personalizadas
+from rest_framework.authtoken.models import Token       # Para generar y validar tokens de autenticación
+from rest_framework.views import APIView                # Para crear vistas API personalizadas
+from rest_framework.permissions import AllowAny         # Permite acceso sin autenticación
+from django.contrib.auth import authenticate            # Autenticación de usuarios
+from rest_framework import status                       # Códigos HTTP estándar
+from django.contrib.auth import get_user_model          # Para usar el modelo de usuario personalizado
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.permissions import IsAuthenticated
-from .serializers import CitaSerializers
-from .serializers import PacienteRegistroSerializer
+from django.views.decorators.csrf import csrf_exempt    
+from rest_framework.permissions import IsAuthenticated  # Requiere autenticación
+
+
+# ------------------------------------------------
+# Vista personalizada para reservar una cita
+# ------------------------------------------------
 
 class ReservarCitaView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados pueden reservar
 
     def post(self, request):
         serializer = CitaSerializers(data=request.data)
@@ -24,84 +27,108 @@ class ReservarCitaView(APIView):
             return Response({"mensaje": "Cita reservada correctamente"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# ------------------------------------------------
+# Vista personalizada para login de usuario
+# ------------------------------------------------
+
+
+
 class LoginView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny]  # No requiere autenticación para acceder al login
 
     def post(self, request):
-        # api_key = request.headers.get('x-api-key')
-        # if api_key != settings.API_KEY:
-        #     return Response({"error": "API Key Invalida"}, status=403)
         username = request.data.get("username")
         password = request.data.get("password")
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=username, password=password)  # Verifica credenciales
+
         if user is not None:
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response({
-                "token": token.key,
-                'usuario': {
-                'id': user.id,
-                'username': user.username,
-                'first_name': user.nombre,
-                'last_name': user.apellido,
-                'email': user.email,
-                'dni': user.dni,
-                'telefono': user.telefono,
-                'tipo_usuario': user.tipo_usuario
-                }
-            })
+            token, _ = Token.objects.get_or_create(user=user)  # Genera token si es válido
+            return Response({"token": token.key})  # Devuelve token
         else:
             return Response({"error": "Credenciales Invalidas"}, status=400)
-        
 
-@method_decorator(csrf_exempt, name='dispatch')
-class RegistroPacienteView(APIView):
-    permission_classes = [AllowAny]
+
+
+# ------------------------------------------------
+# Vista para registrar usuarios nuevos
+# ------------------------------------------------
+
+
+
+User = get_user_model()
+
+@method_decorator(csrf_exempt, name='dispatch')  # Exime protección CSRF
+class RegistroView(APIView):
+    permission_classes = [AllowAny]  # Cualquiera puede registrarse
 
     def post(self, request):
-        serializer = PacienteRegistroSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'mensaje': 'Paciente registrado correctamente'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data
+
+        try:
+            # Crea usuario con los campos básicos
+            user = User.objects.create_user(
+                username=data.get('username'),
+                email=data.get('correo'),
+                password=data.get('password')
+            )
+
+            # Asigna campos personalizados adicionales
+            user.nombre = data.get('nombre')
+            user.apellido = data.get('apellido')
+            user.dni = data.get('dni')
+            user.telefono = data.get('telefono')
+            user.tipo_usuario = 'paciente'  # Siempre se crea como paciente
+
+            user.save()
+
+            return Response({"mensaje": "Usuario creado correctamente"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
+# ------------------------------------------------
+# VISTAS BASADAS EN MODELOS PARA CRUD AUTOMÁTICO
+# ---------------------------------------------------
 
-class UsuarioViewsets (viewsets.ModelViewSet):
+
+# CRUD de Usuarios
+class UsuarioViewsets(viewsets.ModelViewSet):
     queryset = models.Usuario.objects.all()
     serializer_class = serializers.UsuarioSerializers
 
-
-class PacienteViewsets (viewsets.ModelViewSet):
+# CRUD de Pacientes
+class PacienteViewsets(viewsets.ModelViewSet):
     queryset = models.Paciente.objects.all()
     serializer_class = serializers.PacienteSerializers
 
-
-class EspecialidadViewsets (viewsets.ModelViewSet):
+# CRUD de Especialidades médicas
+class EspecialidadViewsets(viewsets.ModelViewSet):
     queryset = models.Especialidad.objects.all()
     serializer_class = serializers.EspecialidadSerializers
 
-
-class MedicoViewsets (viewsets.ModelViewSet):
+# CRUD de Médicos
+class MedicoViewsets(viewsets.ModelViewSet):
     queryset = models.Medico.objects.all()
     serializer_class = serializers.MedicoSerializers
 
-
-class CitaViewsets (viewsets.ModelViewSet):
+# CRUD de Citas médicas
+class CitaViewsets(viewsets.ModelViewSet):
     queryset = models.Cita.objects.all()
     serializer_class = serializers.CitaSerializers
 
-
-class RegistroVisitasViewsets (viewsets.ModelViewSet):
+# CRUD de registros de visitas
+class RegistroVisitasViewsets(viewsets.ModelViewSet):
     queryset = models.RegistroVisitas.objects.all()
     serializer_class = serializers.RegistroVisitasSerializers
 
-
-class AdministradorViewsets (viewsets.ModelViewSet):
+# CRUD de Administradores
+class AdministradorViewsets(viewsets.ModelViewSet):
     queryset = models.Administrador.objects.all()
     serializer_class = serializers.AdministradorSerializers
 
-
-class HistorialMedicoViewsets (viewsets.ModelViewSet):
+# CRUD del Historial Médico
+class HistorialMedicoViewsets(viewsets.ModelViewSet):
     queryset = models.HistorialMedico.objects.all()
     serializer_class = serializers.HistorialMedicoSerializers

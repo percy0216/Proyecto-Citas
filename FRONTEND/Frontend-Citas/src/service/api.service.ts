@@ -1,6 +1,8 @@
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
+
+// Importamos todos los modelos que serán usados en las peticiones HTTP
 import { Usuario } from "../models/usuario.models";
 import { Paciente } from "../models/paciente.models";
 import { Cita } from "../models/cita.models";
@@ -11,40 +13,39 @@ import { HistorialMedico } from "../models/historialmedico.models";
 import { Administrador } from "../models/administrador.models";
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root' // Este servicio estará disponible de forma global
 })
-
 export class ApiService {
 
-    private ApiUrl = 'http://127.0.0.1:8000/api/';
+    private ApiUrl = 'http://127.0.0.1:8000/api/'; // URL base del backend
     private httpOptions = {
         headers: new HttpHeaders({
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json' // Encabezado para enviar datos como JSON
         })
     }
-    constructor(private http: HttpClient) { }
 
-    // =============================== USUARIO ================================
+    constructor(private http: HttpClient) { } // Inyección de HttpClient para realizar peticiones HTTP
+
+    // ==================== USUARIO ====================
     public getUsuarios(): Observable<Usuario[]> {
         return this.http.get<Usuario[]>(this.ApiUrl + 'usuario/');
     }
 
-    public deleteUsuario(id:string): Observable<void>{
+    public deleteUsuario(id: string): Observable<void> {
         return this.http.delete<void>(this.ApiUrl + 'usuario/' + id + "/");
     }
 
-    public putUsuario(usuario:Usuario): Observable<Usuario>{
+    public putUsuario(usuario: Usuario): Observable<Usuario> {
+        let body = JSON.stringify(usuario); // Convertimos el objeto a JSON
+        return this.http.put<Usuario>(this.ApiUrl + 'usuario/' + usuario.id + "/", body, this.httpOptions);
+    }
+
+    public postUsuario(usuario: Usuario): Observable<Usuario> {
         let body = JSON.stringify(usuario);
-        return this.http.put<Usuario>(this.ApiUrl + 'usuario/' + usuario.id + "/",body,this.httpOptions);
+        return this.http.post<Usuario>(this.ApiUrl + 'usuario/', body, this.httpOptions);
     }
 
-    public postUsuario(Usuario:Usuario): Observable<Usuario>{
-        let body = JSON.stringify(Usuario);
-        return this.http.post<Usuario>(this.ApiUrl + 'usuario/',body,this.httpOptions);
-    }
-
-    // =============================== PACIENTE ================================
-    
+    // ==================== PACIENTE ====================
     public getPacientes(): Observable<Paciente[]> {
         return this.http.get<Paciente[]>(this.ApiUrl + 'paciente/');
     }
@@ -63,8 +64,7 @@ export class ApiService {
         return this.http.post<Paciente>(this.ApiUrl + 'paciente/', body, this.httpOptions);
     }
 
-
-    // =============================== CITA ================================
+    // ==================== CITA ====================
     public getCitas(): Observable<Cita[]> {
         return this.http.get<Cita[]>(this.ApiUrl + 'cita/');
     }
@@ -83,7 +83,7 @@ export class ApiService {
         return this.http.post<Cita>(this.ApiUrl + 'cita/', body, this.httpOptions);
     }
 
-    // =============================== MEDICO ================================
+    // ==================== MEDICO ====================
     public getMedicos(): Observable<Medico[]> {
         return this.http.get<Medico[]>(this.ApiUrl + 'medico/');
     }
@@ -102,8 +102,7 @@ export class ApiService {
         return this.http.post<Medico>(this.ApiUrl + 'medico/', body, this.httpOptions);
     }
 
-
-    // =============================== ESPECIALIDAD ================================
+    // ==================== ESPECIALIDAD ====================
     public getEspecialidades(): Observable<Especialidad[]> {
         return this.http.get<Especialidad[]>(this.ApiUrl + 'especialidad/');
     }
@@ -122,7 +121,7 @@ export class ApiService {
         return this.http.post<Especialidad>(this.ApiUrl + 'especialidad/', body, this.httpOptions);
     }
 
-    // =============================== REGISTRO VISITAS================================
+    // ==================== REGISTRO DE VISITAS ====================
     public getRegistroVisitas(): Observable<RegistroVisitas[]> {
         return this.http.get<RegistroVisitas[]>(this.ApiUrl + 'registrovisitas/');
     }
@@ -141,7 +140,7 @@ export class ApiService {
         return this.http.post<RegistroVisitas>(this.ApiUrl + 'registrovisitas/', body, this.httpOptions);
     }
 
-    // =============================== HISTORIAL MEDICO ================================
+    // ==================== HISTORIAL MÉDICO ====================
     public getHistoriales(): Observable<HistorialMedico[]> {
         return this.http.get<HistorialMedico[]>(this.ApiUrl + 'historialmedico/');
     }
@@ -160,7 +159,7 @@ export class ApiService {
         return this.http.post<HistorialMedico>(this.ApiUrl + 'historialmedico/', body, this.httpOptions);
     }
 
-    // =============================== ADMINISTRADOR ================================
+    // ==================== ADMINISTRADOR ====================
     public getAdministradores(): Observable<Administrador[]> {
         return this.http.get<Administrador[]>(this.ApiUrl + 'administrador/');
     }
