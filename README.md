@@ -5,15 +5,19 @@
 
 📦 1. Crear un entorno virtual
 Desde la raíz del proyecto, ejecuta:
-py -m venv env
+
+*py -m venv env*
 
 🚀 2. Activar el entorno virtual
+
 .\env\Scripts\activate
 
 📂 3. Entrar a la carpeta del backend
+
 cd backend
 
 🛠️ 4. Instalar las dependencias necesarias
+
 pip install djangorestframework django-cors-headers
 
 (Asegúrate también de configurar correctamente INSTALLED_APPS y MIDDLEWARE en settings.py)
@@ -21,12 +25,15 @@ pip install djangorestframework django-cors-headers
 🌐 Configuración del Frontend (Angular)
 
 📁 1. Entrar a la carpeta del frontend
+
 cd frontend
 
 📥 2. Instalar las dependencias del proyecto
+
 npm install
 
 🧪 3. Ejecutar el servidor de desarrollo
+
 ng serve
 
 El proyecto estara listo para ejecutarse!!
