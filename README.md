@@ -1,31 +1,32 @@
 ﻿# Proyecto-Citas
+# Este proyecto está dividido en dos partes: Backend desarrollado con Django + Django REST Framework y Frontend con Angular.
 
-🖥️ Configuración del Proyecto 🔧 Backend (Django + REST Framework) 📦 Crear un entorno virtual
+🔧 Configuración del Backend (Django + REST Framework)
 
-En la raíz del proyecto, ejecuta:
-
+📦 1. Crear un entorno virtual
+Desde la raíz del proyecto, ejecuta:
 py -m venv env
 
-🚪 Activar el entorno virtual
-
+🚀 2. Activar el entorno virtual
 .\env\Scripts\activate
 
-📂 Entrar a la carpeta del backend
-
+📂 3. Entrar a la carpeta del backend
 cd backend
 
-🛠️ Instalar dependencias necesarias
-
+🛠️ 4. Instalar las dependencias necesarias
 pip install djangorestframework django-cors-headers
 
-💻 Frontend Ejemplo para Angular:
+(Asegúrate también de configurar correctamente INSTALLED_APPS y MIDDLEWARE en settings.py)
 
-📁 Ir a la carpeta del frontend: cd frontend
+🌐 Configuración del Frontend (Angular)
 
-📥 Instalar dependencias:
+📁 1. Entrar a la carpeta del frontend
+cd frontend
 
+📥 2. Instalar las dependencias del proyecto
 npm install
 
-🚀 Ejecutar el servidor de desarrollo:
-
+🧪 3. Ejecutar el servidor de desarrollo
 ng serve
+
+El proyecto estara listo para ejecutarse!!
