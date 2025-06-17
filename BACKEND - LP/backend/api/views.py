@@ -86,6 +86,9 @@ class MedicoViewsets (viewsets.ModelViewSet):
     queryset = models.Medico.objects.all()
     serializer_class = serializers.MedicoSerializers
 
+class HorarioViewsets (viewsets.ModelViewSet):
+    queryset = models.Horario.objects.all()
+    serializer_class = serializers.HorarioSerializers
 
 class CitaViewsets (viewsets.ModelViewSet):
     queryset = models.Cita.objects.all()

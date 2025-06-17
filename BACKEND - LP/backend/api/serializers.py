@@ -35,6 +35,11 @@ class MedicoSerializers(serializers.ModelSerializer):
         model = models.Medico
         fields = '__all__'
 
+class HorarioSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Medico
+        fields = '__all__'
+
 class CitaSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Cita

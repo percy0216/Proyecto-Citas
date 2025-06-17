@@ -12,6 +12,7 @@ router.register('cita', views.CitaViewsets)
 router.register('registrovisitas', views.RegistroVisitasViewsets)
 router.register('administrador', views.AdministradorViewsets)
 router.register('historialmedico', views.HistorialMedicoViewsets)
+router.register('horario', views.HorarioViewsets)
 
 urlpatterns = [
     path('', include(router.urls)),

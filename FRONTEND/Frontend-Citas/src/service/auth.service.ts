@@ -1,5 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable } from "rxjs";
+import {tap} from 'rxjs/operators';
+import { LoginResponse } from "../models/loginresponse.models";
 
 @Injectable({
     providedIn: 'root'
@@ -23,8 +26,13 @@ export class AuthService {
 
 
     login(username: string, password: string) {
-        return this.http.post(this.loginUrl, { username, password });
-    }
+        return this.http.post<LoginResponse>(this.loginUrl, { username, password }).pipe(
+            tap(response => {
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('tipo_usuario', response.usuario.tipo_usuario);
+            })
+        );
+        }
 
     isAuthenticated(): boolean {
         const token = localStorage.getItem('token');
