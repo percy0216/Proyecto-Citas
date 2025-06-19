@@ -32,7 +32,11 @@ export class AuthService {
             localStorage.setItem('tipo_usuario', response.usuario.tipo_usuario);
             })
         );
-        }
+    }
+
+    getTipoUsuario(): string | null {
+        return localStorage.getItem('tipo_usuario');
+    }
 
     isAuthenticated(): boolean {
         const token = localStorage.getItem('token');

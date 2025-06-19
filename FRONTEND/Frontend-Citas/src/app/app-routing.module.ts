@@ -7,6 +7,8 @@ import { HomeComponent } from './home/home.component';
 import { RegistroComponent } from './registro/registro.component';
 import { ReservarcitaComponent } from './reservarcita/reservarcita.component';
 import { MiperfilComponent } from './miperfil/miperfil.component';
+import { LoginadminComponent } from './loginadmin/loginadmin.component';
+import { AdminGuard } from './guards/admin.guard';
 
 
 const routes: Routes = [
@@ -16,6 +18,7 @@ const routes: Routes = [
   {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   {path: 'reservarcita', component: ReservarcitaComponent, canActivate: [AuthGuard]},
   {path: 'miperfil', component: MiperfilComponent, canActivate: [AuthGuard]},
+  {path: 'admin', component: LoginadminComponent, canActivate: [AdminGuard]},
   { path: '', redirectTo: '/index', pathMatch: 'full' }
 ];
 

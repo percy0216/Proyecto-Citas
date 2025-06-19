@@ -27,6 +27,7 @@ import { HomeComponent } from './home/home.component';
 import { RegistroComponent } from './registro/registro.component';
 import { ReservarcitaComponent } from './reservarcita/reservarcita.component';
 import { MiperfilComponent } from './miperfil/miperfil.component';
+import { LoginadminComponent } from './loginadmin/loginadmin.component';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { MiperfilComponent } from './miperfil/miperfil.component';
     RegistroComponent,
     ReservarcitaComponent,
     MiperfilComponent,
+    LoginadminComponent,
   
   ],
   imports: [

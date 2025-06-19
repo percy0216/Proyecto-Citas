@@ -17,17 +17,27 @@ export class LoginComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
   login() {
-    this.auth.login(this.username, this.password).subscribe({
-      next: (res: any) => {
-        console.log('Respuesta del backend:', res);
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('usuario', JSON.stringify(res.usuario));
+  this.auth.login(this.username, this.password).subscribe({
+    next: (res: any) => {
+      console.log('Respuesta del backend:', res);
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('usuario', JSON.stringify(res.usuario));
+
+      const tipo = res.usuario.tipo_usuario;
+
+      if (tipo === 'admin') {
+        this.router.navigate(['/admin']);
+      } else if (tipo === 'medico') {
+        this.router.navigate(['/medico']);
+      } else {
         this.router.navigate(['/home']);
-      },
-      error: () => {
-        this.error = 'Usuario y/o contraseña incorrectos';
       }
-    });
-  }
+    },
+    error: () => {
+      this.error = 'Usuario y/o contraseña incorrectos';
+    }
+  });
+}
+
 
 }
