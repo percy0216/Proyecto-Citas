@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ReservarcitaComponent } from './reservarcita.component';
+import { ReservarCitaComponent } from './reservar-cita.component';
 
-describe('ReservarcitaComponent', () => {
-  let component: ReservarcitaComponent;
-  let fixture: ComponentFixture<ReservarcitaComponent>;
+describe('ReservarCitaComponent', () => {
+  let component: ReservarCitaComponent;
+  let fixture: ComponentFixture<ReservarCitaComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ReservarcitaComponent]
+      declarations: [ReservarCitaComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ReservarcitaComponent);
+    fixture = TestBed.createComponent(ReservarCitaComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

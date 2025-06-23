@@ -1,0 +1,87 @@
+/* Estilos globales */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+form {
+  background-color: #fff;
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #4CAF50;
+  margin-bottom: 30px;
+}
+
+/* Contenedor de campos */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+}
+
+select, input[type="date"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+/* Estilo para los botones */
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+button {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#reservar {
+  background-color: #4CAF50;
+  color: white;
+}
+
+#calcular {
+  background-color: #FF6347;
+  color: white;
+}
+
+#reservar:hover {
+  background-color: #45a049;
+}
+
+#calcular:hover {
+  background-color: #e53e3e;
+}
+
+/* Estilo para la entrada del calendario */
+input[type="date"] {
+  padding: 12px;
+}
+
+/* Estilo para los selectores */
+select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}

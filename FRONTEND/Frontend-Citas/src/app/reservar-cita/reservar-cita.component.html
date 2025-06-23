@@ -1,0 +1,31 @@
+<form [formGroup]="citaForm" (ngSubmit)="registrar()">
+  <div class="form-group">
+    <label for="especialidad">Selección, especialidad:</label>
+    <select formControlName="especialidad" id="especialidad">
+      <option value="1">Opción 1</option>
+      <option value="2">Opción 2</option>
+      <option value="3">Opción 3</option>
+      <option value="4">Opción 4</option>
+      <option value="5">Opción 5</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="medico">Selección, médico:</label>
+    <select formControlName="medico" id="medico">
+      <option value="1">Médico 1</option>
+      <option value="2">Médico 2</option>
+      <option value="3">Médico 3</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="fecha">Selección, fecha:</label>
+    <input type="date" formControlName="fecha" id="fecha" />
+  </div>
+
+  <div class="buttons">
+    <button type="submit" [disabled]="citaForm.invalid" id="reservar">Reservar cita</button>
+    <button type="button" id="calcular">Calcular</button>
+  </div>
+</form>

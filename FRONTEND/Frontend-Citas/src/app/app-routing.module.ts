@@ -5,8 +5,8 @@ import { IndexComponent } from './index/index.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { RegistroComponent } from './registro/registro.component';
-import { ReservarcitaComponent } from './reservarcita/reservarcita.component';
 import { MiperfilComponent } from './miperfil/miperfil.component';
+import { reservarcitacomponent } from './reservar-cita/reservar-cita.component';
 
 
 const routes: Routes = [
@@ -14,7 +14,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'registro', component: RegistroComponent},
   {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  {path: 'reservarcita', component: ReservarcitaComponent, canActivate: [AuthGuard]},
+  {path: 'reservarcita', component: reservarcitacomponent, canActivate: [AuthGuard]},
   {path: 'miperfil', component: MiperfilComponent, canActivate: [AuthGuard]},
   { path: '', redirectTo: '/index', pathMatch: 'full' }
 ];
