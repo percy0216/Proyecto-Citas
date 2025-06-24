@@ -83,7 +83,11 @@ export class ApiService {
         return this.http.post<Cita>(this.ApiUrl + 'cita/', body, this.httpOptions);
     }
 
-    // =============================== MEDICO ================================
+    // =============================== MEDICO  ================================ 
+    private apiUrlEspecialidades = 'http://127.0.0.1:8000/api/especialidad';
+    private apiUrlMedicos = 'http://127.0.0.1:8000/api/medico';
+
+    
     public getMedicos(): Observable<Medico[]> {
         return this.http.get<Medico[]>(this.ApiUrl + 'medico/');
     }
