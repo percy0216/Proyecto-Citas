@@ -14,9 +14,11 @@ export class AdminGuard implements CanActivate {
 
     if (tipo === 'admin') {
       return true;
+      
     }
 
-    this.router.navigate(['/index']); // o donde tú quieras
+    this.router.navigate(['/panel-admin-9472']);
+         
     return false;
   }
 }

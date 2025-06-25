@@ -1,1 +1,77 @@
-<p>loginadmin works!</p>
+<div *ngIf="esAdmin">
+<div class="p-5">
+  <h2 class="mb-4">Bienvenido Administrador</h2>
+  <button  (click)="cerrarSesion()">Cerrar Sesión</button>
+  <h4>Usuarios registrados:</h4>
+
+  <table class="table table-bordered mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>DNI</th>
+        <th>Tipo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.id }}</td>
+        <td>{{ usuario.username }}</td>
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.apellido }}</td>
+        <td>{{ usuario.dni }}</td>
+        <td>{{ usuario.tipo_usuario }}</td>
+        <td>
+          <button pButton icon="pi pi-eye" class="p-button-text p-button-sm" (click)="verUsuario(usuario)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-text p-button-sm" (click)="eliminarUsuario(usuario.id)"></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<p-dialog header="Detalles del Usuario" [(visible)]="mostrarmodal" [modal]="true" [style]="{width: '70vw'}" (onHide)="cerrarModal()">
+  <div *ngIf="usuarioseleccionado && !editando">
+    <p><strong>Nombre:</strong> {{ usuarioseleccionado.nombre }}</p>
+    <p><strong>Apellido:</strong> {{ usuarioseleccionado.apellido }}</p>
+    <p><strong>DNI:</strong> {{ usuarioseleccionado.dni }}</p>
+    <p><strong>Correo:</strong> {{ usuarioseleccionado.email }}</p>
+    <p><strong>Teléfono:</strong> {{ usuarioseleccionado.telefono }}</p>
+    <p><strong>Tipo de Usuario:</strong> {{ usuarioseleccionado.tipo_usuario }}</p>
+
+    <!-- Botón para habilitar edición -->
+    <button pButton label="Editar" class="p-button-warning mt-3" (click)="habilitarEdicion()"></button>
+  </div>
+
+  <div *ngIf="editando">
+    <div class="p-field">
+      <label>Nombre</label>
+      <input pInputText [(ngModel)]="usuarioseleccionado!.nombre" />
+    </div>
+    <div class="p-field">
+      <label>Apellido</label>
+      <input pInputText [(ngModel)]="usuarioseleccionado!.apellido" />
+    </div>
+    <div class="p-field">
+      <label>DNI</label>
+      <input pInputText [(ngModel)]="usuarioseleccionado!.dni" />
+    </div>
+    <div class="p-field">
+      <label>Correo</label>
+      <input pInputText [(ngModel)]="usuarioseleccionado!.email" />
+    </div>
+    <div class="p-field">
+      <label>Teléfono</label>
+      <input pInputText [(ngModel)]="usuarioseleccionado!.telefono" />
+    </div>
+
+    <button pButton label="Guardar" class="p-button-success mt-2" (click)="guardarCambios()"></button>
+    <button pButton label="Cancelar" class="p-button-secondary mt-2 ml-2" (click)="cancelarEdicion()"></button>
+  </div>
+</p-dialog>
+
+</div>

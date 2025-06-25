@@ -18,7 +18,7 @@ const routes: Routes = [
   {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   {path: 'reservarcita', component: ReservarcitaComponent, canActivate: [AuthGuard]},
   {path: 'miperfil', component: MiperfilComponent, canActivate: [AuthGuard]},
-  {path: 'admin', component: LoginadminComponent, canActivate: [AdminGuard]},
+  {path: 'panel-admin-9472', component: LoginadminComponent, canActivate: [AdminGuard]},
   { path: '', redirectTo: '/index', pathMatch: 'full' }
 ];
 

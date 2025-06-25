@@ -16,6 +16,18 @@ export class LoginComponent {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+
+
+  // onCaptchaResolved(token: string | null) {
+  //   if (token) {
+  //   console.log('reCAPTCHA resuelto:', token);
+  //   // Aquí puedes guardar el token o validarlo con el backend si lo necesitas
+  // } else {
+  //   console.warn('reCAPTCHA no completado');
+  // }
+  // }
+
+
   login() {
   this.auth.login(this.username, this.password).subscribe({
     next: (res: any) => {
@@ -26,18 +38,21 @@ export class LoginComponent {
       const tipo = res.usuario.tipo_usuario;
 
       if (tipo === 'admin') {
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/panel-admin-9472']);
       } else if (tipo === 'medico') {
         this.router.navigate(['/medico']);
       } else {
         this.router.navigate(['/home']);
       }
     },
+
     error: () => {
       this.error = 'Usuario y/o contraseña incorrectos';
     }
-  });
-}
+    
+    });
+  }
+
 
 
 }

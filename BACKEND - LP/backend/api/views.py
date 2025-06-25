@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CitaSerializers
 from .serializers import PacienteRegistroSerializer
+import requests
 
 class ReservarCitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -28,9 +29,20 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # api_key = request.headers.get('x-api-key')
-        # if api_key != settings.API_KEY:
-        #     return Response({"error": "API Key Invalida"}, status=403)
+
+        # captcha = request.data.get("captcha")
+        # if not captcha:
+        #     return Response({"error": "Captcha requerido"}, status=400)
+
+        # # Verificar con Google
+        # captcha_verificado = requests.post("https://www.google.com/recaptcha/api/siteverify", data={
+        #     'secret': '6LfCkWYrAAAAAJ43W1Wca68I8JSYEBVJQj-QNzY0',
+        #     'response': captcha
+        # }).json()
+
+        # if not captcha_verificado.get("success"):
+        #     return Response({"error": "Captcha inválido"}, status=400)
+
         username = request.data.get("username")
         password = request.data.get("password")
         user = authenticate(username=username, password=password)

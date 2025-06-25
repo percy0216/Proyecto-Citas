@@ -10,6 +10,12 @@
           <label for="password" class="form-label fw-semibold text-white">Contraseña</label>
           <input id="password" type="password" class="form-control" [(ngModel)]="password" name="password" required>
         </div>
+        <!-- <div class="p-field">
+          <re-captcha
+            (resolved)="onCaptchaResolved($event)"
+            siteKey="6LfCkWYrAAAAAJ43W1Wca68I8JSYEBVJQj-QNzY0"
+          ></re-captcha>
+        </div> -->
         <button pButton type="submit" label="Ingresar" class="w-100 mt-2 custom-btn"></button>
         <button pButton type="submit" label="Atras" class="w-100 mt-2 custom-btn" [routerLink]="['/index']"></button>
         <p-message *ngIf="error" severity="error" text="{{ error }}" class="mt-3"></p-message>
