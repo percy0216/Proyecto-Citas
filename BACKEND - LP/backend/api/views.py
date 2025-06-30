@@ -11,14 +11,14 @@ from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
-from .serializers import CitaSerializers
+from .serializers import citaSerializers
 from .serializers import PacienteRegistroSerializer
 
 class ReservarCitaView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = CitaSerializers(data=request.data)
+        serializer = citaSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"mensaje": "Cita reservada correctamente"}, status=status.HTTP_201_CREATED)
@@ -89,7 +89,7 @@ class MedicoViewsets (viewsets.ModelViewSet):
 
 class CitaViewsets (viewsets.ModelViewSet):
     queryset = models.Cita.objects.all()
-    serializer_class = serializers.CitaSerializers
+    serializer_class = serializers.citaSerializers
 
 
 class RegistroVisitasViewsets (viewsets.ModelViewSet):

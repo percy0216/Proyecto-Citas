@@ -17,5 +17,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', views.LoginView.as_view(), name='login/'),
     path('registro/', views.RegistroPacienteView.as_view(), name='registro/'),
-    #path('reservarcita/', views.ReservarCitaView.as_view(), name='reservarcita/'),
+    path('reservarcita/', views.ReservarCitaView.as_view(), name='reservarcita/'),
 ]

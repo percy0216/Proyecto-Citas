@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { OnInit } from '@angular/core';
-import { CitaService } from '../service/cita.service';
+import { CitaService } from '../../service/cita.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ApiService } from '../../service/api.service';
 
 @Component({
   selector: 'app-reservar-cita',
@@ -17,19 +18,18 @@ export class ReservarCitaComponent implements OnInit {
   especialidades: any[] = [];
   medicos: any[] = [];
 
-  constructor(private citaService: CitaService) { }
+  constructor(private apiService: ApiService , private citaService:CitaService , private fb : FormBuilder) { }
 
-  ngOnInit(): void {
-    this.citaForm = new FormGroup({
-      fecha: new FormControl('', Validators.required),
-      hora: new FormControl('', Validators.required),
-      especialidad: new FormControl('', Validators.required),
-      medico: new FormControl('', Validators.required),
-      paciente: new FormControl('', Validators.required)
+   ngOnInit(): void {
+    // Inicializa el formulario con validaciones
+    this.citaForm = this.fb.group({
+      especialidad: ['', Validators.required],
+      medico: ['', Validators.required],
+      fecha: ['', Validators.required]
     });
 
     // Obtener especialidades
-    this.citaService.getEspecialidades().subscribe(
+    this.apiService.getEspecialidades().subscribe(
       (data) => {
         this.especialidades = data;
       },
@@ -40,7 +40,7 @@ export class ReservarCitaComponent implements OnInit {
     );
 
     // Obtener médicos
-    this.citaService.getMedicos().subscribe(
+    this.apiService.getMedicos().subscribe(
       (data) => {
         this.medicos = data;
       },
@@ -51,21 +51,20 @@ export class ReservarCitaComponent implements OnInit {
     );
   }
 
-  registrar(): void {
-    if (this.citaForm.valid) {
-      const citaData = this.citaForm.value;
-      console.log('Cita reservada con los siguientes datos:', citaData);
+registrar(): void {
+  if (this.citaForm.valid) {
+    const citaData = this.citaForm.value;
+    console.log('Datos enviados:', citaData);  // Verifica los datos
 
-      // Aquí puedes manejar el envío de datos al backend
-      this.citaService.registrarCita(citaData).subscribe(
-        (response) => {
-          console.log('Cita registrada con éxito:', response);
-        },
-        // Especificamos el tipo del parámetro 'error'
-        (error: HttpErrorResponse) => {
-          console.error('Error al registrar la cita', error);
-        }
-      );
-    }
+    this.citaService.registrarCita(citaData).subscribe(
+      (response) => {
+        console.log('Cita registrada con éxito:', response);
+      },
+      (error) => {
+        console.error('Error al registrar la cita', error);
+      }
+    );
   }
+}
+
 }

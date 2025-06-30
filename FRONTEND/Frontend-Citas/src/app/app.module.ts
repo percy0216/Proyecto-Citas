@@ -26,7 +26,7 @@ import { IndexComponent } from './index/index.component';
 import { HomeComponent } from './home/home.component';
 import { RegistroComponent } from './registro/registro.component';
 import { MiperfilComponent } from './miperfil/miperfil.component';
-import { reservarcitacomponent } from './reservar-cita/reservar-cita.component';
+import { ReservarCitaComponent } from './reservar-cita/reservar-cita.component';
 
 
 @NgModule({
@@ -36,7 +36,7 @@ import { reservarcitacomponent } from './reservar-cita/reservar-cita.component';
     LoginComponent,
     HomeComponent,
     RegistroComponent,
-    reservarcitacomponent,
+    ReservarCitaComponent,
     MiperfilComponent,
   
   ],

@@ -1,10 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Cita } from '../models/cita.models';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Especialidad } from '../models/especialidad.models';
-import { Medico } from '../models/medico.models';
 import { Router } from '@angular/router';
 import { ApiService } from './api.service';
 
@@ -16,7 +13,7 @@ export class CitaService {
   especialidades: any[] = [];
   medicos: any[] = [];
 
-  constructor(private citaService: CitaService, private route: Router, private apiservice: ApiService) { }
+  constructor(private route: Router, private apiservice: ApiService, private http: HttpClient ) { }
 
   ngOnInit() {
     this.citaForm = new FormGroup({
@@ -35,12 +32,14 @@ export class CitaService {
     // Obtener médicos
     this.apiservice.getMedicos().subscribe(data => {
       this.medicos = data;
+      console.log('Médicos:', this.medicos);
     });
   }
 
-  registrar() {
-    if (this.citaForm.valid) {
-      console.log(this.citaForm.value); // Enviar los datos al servidor
-    }
+  registrarCita(citaData: any): Observable<any> {
+    // Si el formulario es válido, puedes enviar los datos al servidor
+    // if (this.citaForm.valid) {
+    // console.log(this.citaForm.value); 
+    return this.http.post<any>('http://127.0.0.1:8000/api/reservarcita/', citaData);
   }
 }

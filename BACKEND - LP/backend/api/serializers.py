@@ -35,10 +35,17 @@ class MedicoSerializers(serializers.ModelSerializer):
         model = models.Medico
         fields = '__all__'
 
-class CitaSerializers(serializers.ModelSerializer):
+class citaSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Cita
         fields = '__all__'
+
+class reservarCitaSerializers(serializers.Serializer):
+    especialidad = serializers.IntegerField()  # O puede ser un ForeignKey si usas relaciones
+    medico = serializers.IntegerField()  # También puede ser un ForeignKey
+    fecha = serializers.DateField()  # Fecha
+    hora = serializers.CharField()  # Hora como string, si la pasas como texto
+    paciente = serializers.IntegerField()  # Si es el ID de un paciente
 
 class RegistroVisitasSerializers(serializers.ModelSerializer):
     class Meta:

@@ -1,8 +1,8 @@
-<form [formGroup]="citaForm" (ngSubmit)="registrar()">
+<form *ngIf="citaForm" [formGroup]="citaForm" (ngSubmit)="registrar()">
   <div class="form-group">
     <label for="especialidad">Selección, especialidad:</label>
     <select formControlName="especialidad" id="especialidad">
-      <option *ngFor="let especialidad of especialidad" [value]="especialidad.id">
+      <option *ngFor="let especialidad of especialidades" [value]="especialidad.id">
         {{ especialidad.nombre }}
       </option>
     </select>
@@ -11,8 +11,8 @@
   <div class="form-group">
     <label for="medico">Selección, médico:</label>
     <select formControlName="medico" id="medico">
-      <option *ngFor="let medico of medico" [value]="medico.id">
-        {{ medico.nombre }}
+      <option *ngFor="let medico of medicos" [value]="medico.id">
+         {{ medico.usuario }}
       </option>
     </select>
   </div>
@@ -23,7 +23,7 @@
   </div>
 
   <div class="buttons">
-    <button type="submit" [disabled]="citaForm.invalid">Reservar cita</button>
+    <button type="submit" [disabled]="!citaForm.valid">Reservar cita</button>
     <button type="button" id="calcular">Calcular</button>
   </div>
 </form>
