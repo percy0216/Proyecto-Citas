@@ -13,12 +13,13 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
 from .serializers import citaSerializers
 from .serializers import PacienteRegistroSerializer
+from .serializers import ReservarCitaSerializers
 
 class ReservarCitaView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = citaSerializers(data=request.data)
+        serializer = ReservarCitaSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"mensaje": "Cita reservada correctamente"}, status=status.HTTP_201_CREATED)
@@ -28,30 +29,37 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # api_key = request.headers.get('x-api-key')
-        # if api_key != settings.API_KEY:
-        #     return Response({"error": "API Key Invalida"}, status=403)
         username = request.data.get("username")
         password = request.data.get("password")
         user = authenticate(username=username, password=password)
+
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
+
+            # ✅ NUEVO BLOQUE: obtener paciente_id si es paciente
+            paciente_id = None
+            if user.tipo_usuario == 'paciente':
+                try:
+                    paciente_id = user.paciente.id
+                except:
+                    pass  # O puedes lanzar un error aquí si lo prefieres
+
             return Response({
                 "token": token.key,
                 'usuario': {
-                'id': user.id,
-                'username': user.username,
-                'first_name': user.nombre,
-                'last_name': user.apellido,
-                'email': user.email,
-                'dni': user.dni,
-                'telefono': user.telefono,
-                'tipo_usuario': user.tipo_usuario
+                    'id': user.id,
+                    'username': user.username,
+                    'first_name': user.nombre,
+                    'last_name': user.apellido,
+                    'email': user.email,
+                    'dni': user.dni,
+                    'telefono': user.telefono,
+                    'tipo_usuario': user.tipo_usuario,
+                    'paciente_id': paciente_id
                 }
             })
         else:
             return Response({"error": "Credenciales Invalidas"}, status=400)
-        
 
 @method_decorator(csrf_exempt, name='dispatch')
 class RegistroPacienteView(APIView):

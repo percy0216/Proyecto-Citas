@@ -39,7 +39,7 @@ export class CitaService {
   registrarCita(citaData: any): Observable<any> {
     // Si el formulario es válido, puedes enviar los datos al servidor
     // if (this.citaForm.valid) {
-    // console.log(this.citaForm.value); 
+    console.log('Datos enviados:', citaData); // Verifica los datos antes de enviarlos
     return this.http.post<any>('http://127.0.0.1:8000/api/reservarcita/', citaData);
   }
 }

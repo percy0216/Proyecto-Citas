@@ -17,54 +17,79 @@ export class ReservarCitaComponent implements OnInit {
   citaForm: FormGroup;
   especialidades: any[] = [];
   medicos: any[] = [];
+  pacientes: any[] = []; // Lista de pacientes, si es necesario
 
-  constructor(private apiService: ApiService , private citaService:CitaService , private fb : FormBuilder) { }
+  constructor(private apiService: ApiService, private citaService: CitaService, private fb: FormBuilder) { }
 
-   ngOnInit(): void {
-    // Inicializa el formulario con validaciones
+  ngOnInit(): void {
     this.citaForm = this.fb.group({
       especialidad: ['', Validators.required],
       medico: ['', Validators.required],
-      fecha: ['', Validators.required]
+      fecha: ['', Validators.required],
+      horaAtencion: ['', Validators.required],
+      paciente: ['', Validators.required],  
     });
 
-    // Obtener especialidades
     this.apiService.getEspecialidades().subscribe(
       (data) => {
         this.especialidades = data;
       },
-      // Especificamos el tipo del parámetro 'error'
       (error: HttpErrorResponse) => {
         console.error('Error al obtener las especialidades', error);
       }
     );
 
-    // Obtener médicos
     this.apiService.getMedicos().subscribe(
       (data) => {
         this.medicos = data;
       },
-      // Especificamos el tipo del parámetro 'error'
       (error: HttpErrorResponse) => {
         console.error('Error al obtener los médicos', error);
       }
     );
-  }
 
-registrar(): void {
-  if (this.citaForm.valid) {
-    const citaData = this.citaForm.value;
-    console.log('Datos enviados:', citaData);  // Verifica los datos
-
-    this.citaService.registrarCita(citaData).subscribe(
-      (response) => {
-        console.log('Cita registrada con éxito:', response);
+    // Si necesitas obtener pacientes para llenar el select
+    this.apiService.getPacientes().subscribe(
+      (data) => {
+        this.pacientes = data;
+        console.log('Pacientes:', this.pacientes);
       },
-      (error) => {
-        console.error('Error al registrar la cita', error);
+      (error: HttpErrorResponse) => {
+        console.error('Error al obtener los pacientes', error);
       }
     );
   }
-}
 
+ registrar(): void {
+  if (this.citaForm.valid) {
+    console.log('pacienteseleccionado en el formulario:', this.citaForm.value.paciente);
+
+    const citaData = this.citaForm.value;
+
+    const adjustedData = {
+      especialidad: citaData.especialidad,
+      medico: citaData.medico,
+      fecha: citaData.fecha,
+      hora: citaData.horaAtencion, 
+      paciente: citaData.paciente || null,  
+    };
+
+    console.log('Datos enviados al backend:', adjustedData);
+
+    this.citaService.registrarCita(adjustedData).subscribe(
+      (response) => {
+        console.log('Cita registrada con éxito:', response);
+      },
+      (error: HttpErrorResponse) => {
+        console.error('Detalles del error:', error);
+        if (error.error) {
+          console.error('Mensaje del backend:', error.error);  // Aquí verás el mensaje del servidor
+        }
+      }
+    );
+  } else {
+    console.error('Formulario no válido');
+  }
+}
+  
 }

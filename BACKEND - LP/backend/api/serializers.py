@@ -7,9 +7,11 @@ class UsuarioSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 class PacienteSerializers(serializers.ModelSerializer):
+    nombre = serializers.CharField(source='usuario.nombre', read_only=True)
+
     class Meta:
         model = models.Paciente
-        fields = '__all__'
+        fields = ['id', 'fecha_nacimiento', 'direccion', 'usuario', 'nombre']
 
 class PacienteRegistroSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializers()  # anidamos el serializer de Usuario
@@ -40,12 +42,17 @@ class citaSerializers(serializers.ModelSerializer):
         model = models.Cita
         fields = '__all__'
 
-class reservarCitaSerializers(serializers.Serializer):
-    especialidad = serializers.IntegerField()  # O puede ser un ForeignKey si usas relaciones
-    medico = serializers.IntegerField()  # También puede ser un ForeignKey
-    fecha = serializers.DateField()  # Fecha
-    hora = serializers.CharField()  # Hora como string, si la pasas como texto
-    paciente = serializers.IntegerField()  # Si es el ID de un paciente
+class ReservarCitaSerializers(serializers.Serializer):
+    especialidad = serializers.PrimaryKeyRelatedField(queryset=models.Especialidad.objects.all())
+    medico = serializers.PrimaryKeyRelatedField(queryset=models.Medico.objects.all())
+    fecha = serializers.DateField()
+    hora = serializers.TimeField()  # Cambio de CharField a TimeField para la validación automática de hora
+    paciente = serializers.PrimaryKeyRelatedField(queryset=models.Paciente.objects.all())
+
+    def create(self, validated_data):
+        # Se pueden hacer validaciones extra si es necesario
+        cita = models.Cita.objects.create(**validated_data)
+        return cita
 
 class RegistroVisitasSerializers(serializers.ModelSerializer):
     class Meta:
