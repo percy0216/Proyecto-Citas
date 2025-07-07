@@ -18,7 +18,7 @@ Desde la raíz del proyecto, ejecuta:
 
 🛠️ 4. Instalar las dependencias necesarias
 
-pip install djangorestframework django-cors-headers
+pip install -r requirements.txt
 
 (Asegúrate también de configurar correctamente INSTALLED_APPS y MIDDLEWARE en settings.py)
 
