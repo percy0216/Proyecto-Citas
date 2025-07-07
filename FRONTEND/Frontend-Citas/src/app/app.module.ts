@@ -26,9 +26,10 @@ import { LoginComponent } from './login/login.component';
 import { IndexComponent } from './index/index.component';
 import { HomeComponent } from './home/home.component';
 import { RegistroComponent } from './registro/registro.component';
-import { ReservarcitaComponent } from './reservarcita/reservarcita.component';
+import { ReservarCitaComponent } from './reservarcita/reservarcita.component';
 import { MiperfilComponent } from './miperfil/miperfil.component';
 import { LoginadminComponent } from './loginadmin/loginadmin.component';
+import { CitasprogramadasComponent } from './citasprogramadas/citasprogramadas.component';
 
 
 @NgModule({
@@ -38,9 +39,10 @@ import { LoginadminComponent } from './loginadmin/loginadmin.component';
     LoginComponent,
     HomeComponent,
     RegistroComponent,
-    ReservarcitaComponent,
+    ReservarCitaComponent,
     MiperfilComponent,
     LoginadminComponent,
+    CitasprogramadasComponent,
   
   ],
   imports: [

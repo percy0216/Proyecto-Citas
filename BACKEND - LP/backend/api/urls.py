@@ -18,5 +18,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', views.LoginView.as_view(), name='login/'),
     path('registro/', views.RegistroPacienteView.as_view(), name='registro/'),
+    path('paciente-id/', views.PacienteIdView.as_view(), name='paciente-id/')
     #path('reservarcita/', views.ReservarCitaView.as_view(), name='reservarcita/'),
 ]

@@ -14,6 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import CitaSerializers
 from .serializers import PacienteRegistroSerializer
 import requests
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ReservarCitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -79,14 +81,28 @@ class RegistroPacienteView(APIView):
 
 
 
-class UsuarioViewsets (viewsets.ModelViewSet):
+class UsuarioViewsets(viewsets.ModelViewSet):
     queryset = models.Usuario.objects.all()
-    serializer_class = serializers.UsuarioSerializers
+
+    def get_serializer_class(self):
+        if self.action in ['update', 'partial_update']:
+            return serializers.PerfilUsuarioSerializer
+        return serializers.UsuarioSerializers
 
 
 class PacienteViewsets (viewsets.ModelViewSet):
     queryset = models.Paciente.objects.all()
     serializer_class = serializers.PacienteSerializers
+
+class PacienteIdView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            paciente = models.Paciente.objects.get(usuario=request.user)
+            return Response({'paciente_id': paciente.id}, status=status.HTTP_200_OK)
+        except models.Paciente.DoesNotExist:
+            return Response({'error': 'No es un paciente'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class EspecialidadViewsets (viewsets.ModelViewSet):
@@ -94,17 +110,28 @@ class EspecialidadViewsets (viewsets.ModelViewSet):
     serializer_class = serializers.EspecialidadSerializers
 
 
-class MedicoViewsets (viewsets.ModelViewSet):
+class MedicoViewsets(viewsets.ModelViewSet):
     queryset = models.Medico.objects.all()
     serializer_class = serializers.MedicoSerializers
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['especialidad']
+        
 
 class HorarioViewsets (viewsets.ModelViewSet):
     queryset = models.Horario.objects.all()
     serializer_class = serializers.HorarioSerializers
 
-class CitaViewsets (viewsets.ModelViewSet):
+# class CitaViewsets (viewsets.ModelViewSet):
+#     queryset = models.Cita.objects.all()
+#     serializer_class = serializers.CitaSerializers
+
+class CitaViewsets(viewsets.ModelViewSet):
     queryset = models.Cita.objects.all()
-    serializer_class = serializers.CitaSerializers
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return serializers.CitaReadSerializers
+        return CitaSerializers
 
 
 class RegistroVisitasViewsets (viewsets.ModelViewSet):

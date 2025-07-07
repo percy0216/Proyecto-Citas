@@ -46,4 +46,21 @@ export class AuthService {
     logout() {
         localStorage.removeItem('token');
     }
+
+    getPerfil() {
+    return this.http.get<any>('http://127.0.0.1:8000/api/perfil/', {
+        headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    }
+
+    actualizarPerfil(data: any) {
+    return this.http.put<any>('http://127.0.0.1:8000/api/perfil/', data, {
+        headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+    }
+
 }

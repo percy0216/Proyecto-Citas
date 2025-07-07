@@ -3,11 +3,11 @@ import { Paciente } from './paciente.models';
 import { Medico } from './medico.models';
 
 export interface Cita {
-  id: number;
-  fecha: string | Date;
+  id?: number;
+  fecha: string;
   hora: string;
   estado?: string;
-  especialidad: Especialidad; 
-  paciente: Paciente;         
-  medico: Medico;             
+  especialidad: number; 
+  paciente: number;         
+  medico: number;             
 }

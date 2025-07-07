@@ -1,46 +1,135 @@
-
-<div class="header">
-    <div style="display: flex; align-items: center;">
-       
-      <h1>Mi perfil</h1>
+<div class="dashboard-container">S
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <div class="user-avatar">
+        <i class="pi pi-user"></i>
+      </div>
+      <div class="welcome-text">
+        <h1 class="welcome-title">Mi perfil</h1>
+        <span class="user-name">{{ perfilForm.get('first_name')?.value }} {{ perfilForm.get('last_name')?.value }}</span>
+      </div>
     </div>
-    <button  (click)="cerrarSesion()">Cerrar Sesión</button>
+    <button class="logout-btn" (click)="cerrarSesion()">
+      <i class="pi pi-sign-out"></i> Cerrar Sesión
+    </button>
   </div>
 
-  <div class="nav-buttons">
-    <button [routerLink]="['/home']">Inicio</button>
-    <button [routerLink]="['/miperfil']">Mi perfil</button>
+  <div class="nav-section">
+    <button class="nav-btn" [routerLink]="['/home']">
+      <i class="pi pi-home"></i> Inicio
+    </button>
+    <button class="nav-btn nav-btn-active" disabled>
+      <i class="pi pi-user"></i> Mi perfil
+    </button>
   </div>
 
-  <br>
+  <div class="main-section">
+    <div class="section-header">
+      <h2 class="section-title"><i class="pi pi-id-card"></i> Información Personal</h2>
+      <div class="actions">
+        <button *ngIf="!modoEdicion" class="primary-btn" (click)="modoEdicion = true">
+          <i class="pi pi-pencil"></i> Editar
+        </button>
 
-<form [formGroup]="perfilForm" class="p-fluid p-formgrid p-grid">
+        <ng-container *ngIf="modoEdicion">
+          <button *ngIf="modoEdicion" class="primary-btn" (click)="guardarCambios()">
+            <i class="pi pi-save"></i> Guardar
+          </button>
 
-  <div class="p-field p-col-12 p-md-6">
-    <label for="first_name">Nombre</label>
-    <input id="first_name" type="text" pInputText formControlName="first_name" />
-  </div> <br>
+          <button class="logout-btn" style="border-color: #64748b; color: #64748b;" (click)="cancelarEdicion()" >
+            <i class="pi pi-times"></i> Cancelar
+          </button>
+        </ng-container>
+      </div>
+    </div>
 
-  <div class="p-field p-col-12 p-md-6">
-    <label for="last_name">Apellido</label>
-    <input id="last_name" type="text" pInputText formControlName="last_name" />
-  </div> <br>
+    <form [formGroup]="perfilForm" class="cards-container">
 
-  <div class="p-field p-col-12 p-md-6">
-    <label for="email">Correo</label>
-    <input id="email" type="email" pInputText formControlName="email" />
-  </div> <br>
+      <div class="action-card">
+        <div class="card-content">
+          <div class="card-icon scheduled">
+            <i class="pi pi-user"></i>
+          </div>
+          <div class="card-text">
+            <label>Nombre</label><br />
+            <ng-container *ngIf="!modoEdicion; else editFirstName">
+              {{ perfilForm.get('first_name')?.value || 'No registrado' }}
+            </ng-container>
+            <ng-template #editFirstName>
+              <input type="text" pInputText formControlName="first_name" />
+            </ng-template>
+          </div>
+        </div>
+      </div>
 
-  <div class="p-field p-col-12 p-md-6">
-    <label for="dni">DNI</label>
-    <input id="dni" type="text" pInputText formControlName="dni" />
-  </div> <br>
- 
-  <div class="p-field p-col-12 p-md-6">
-    <label for="telefono">Teléfono</label>
-    <input id="telefono" type="text" pInputText formControlName="telefono" />
-  </div> <br>
+      <div class="action-card">
+        <div class="card-content">
+          <div class="card-icon scheduled">
+            <i class="pi pi-user-edit"></i>
+          </div>
+          <div class="card-text">
+            <label>Apellido</label><br />
+            <ng-container *ngIf="!modoEdicion; else editLastName">
+              {{ perfilForm.get('last_name')?.value || 'No registrado' }}
+            </ng-container>
+            <ng-template #editLastName>
+              <input type="text" pInputText formControlName="last_name" />
+            </ng-template>
+          </div>
+        </div>
+      </div>
 
-  <p-button label="Atras" severity="info" [routerLink]="['/home']" />
-  
-</form>
+      <div class="action-card">
+        <div class="card-content">
+          <div class="card-icon scheduled">
+            <i class="pi pi-envelope"></i>
+          </div>
+          <div class="card-text">
+            <label>Correo</label><br />
+            <ng-container *ngIf="!modoEdicion; else editEmail">
+              {{ perfilForm.get('email')?.value || 'No registrado' }}
+            </ng-container>
+            <ng-template #editEmail>
+              <input type="email" pInputText formControlName="email" />
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-card">
+        <div class="card-content">
+          <div class="card-icon scheduled">
+            <i class="pi pi-id-card"></i>
+          </div>
+          <div class="card-text">
+            <label>DNI</label><br />
+            <ng-container *ngIf="!modoEdicion; else editDni">
+              {{ perfilForm.get('dni')?.value || 'No registrado' }}
+            </ng-container>
+            <ng-template #editDni>
+              <input type="text" pInputText formControlName="dni" />
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-card">
+        <div class="card-content">
+          <div class="card-icon scheduled">
+            <i class="pi pi-phone"></i>
+          </div>
+          <div class="card-text">
+            <label>Teléfono</label><br />
+            <ng-container *ngIf="!modoEdicion; else editTelefono">
+              {{ perfilForm.get('telefono')?.value || 'No registrado' }}
+            </ng-container>
+            <ng-template #editTelefono>
+              <input type="text" pInputText formControlName="telefono" />
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>

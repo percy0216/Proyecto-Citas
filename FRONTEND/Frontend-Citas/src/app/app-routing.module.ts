@@ -5,7 +5,7 @@ import { IndexComponent } from './index/index.component';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { RegistroComponent } from './registro/registro.component';
-import { ReservarcitaComponent } from './reservarcita/reservarcita.component';
+import { ReservarCitaComponent } from './reservarcita/reservarcita.component';
 import { MiperfilComponent } from './miperfil/miperfil.component';
 import { LoginadminComponent } from './loginadmin/loginadmin.component';
 import { AdminGuard } from './guards/admin.guard';
@@ -16,7 +16,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'registro', component: RegistroComponent},
   {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  {path: 'reservarcita', component: ReservarcitaComponent, canActivate: [AuthGuard]},
+  {path: 'reservarcita', component: ReservarCitaComponent, canActivate: [AuthGuard]},
   {path: 'miperfil', component: MiperfilComponent, canActivate: [AuthGuard]},
   {path: 'panel-admin-9472', component: LoginadminComponent, canActivate: [AdminGuard]},
   { path: '', redirectTo: '/index', pathMatch: 'full' }
