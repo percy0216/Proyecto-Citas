@@ -126,12 +126,34 @@ class HorarioViewsets (viewsets.ModelViewSet):
 #     serializer_class = serializers.CitaSerializers
 
 class CitaViewsets(viewsets.ModelViewSet):
-    queryset = models.Cita.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # Verificamos si el usuario tiene un paciente asociado
+        try:
+            paciente = models.Paciente.objects.get(usuario=user)
+            return models.Cita.objects.filter(paciente=paciente)
+        except models.Paciente.DoesNotExist:
+            return models.Cita.objects.none()
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
             return serializers.CitaReadSerializers
-        return CitaSerializers
+        return serializers.CitaSerializers
+    
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.tipo_usuario == 'admin':
+            return models.Cita.objects.all()
+
+        try:
+            paciente = models.Paciente.objects.get(usuario=user)
+            return models.Cita.objects.filter(paciente=paciente)
+        except models.Paciente.DoesNotExist:
+            return models.Cita.objects.none()
 
 
 class RegistroVisitasViewsets (viewsets.ModelViewSet):

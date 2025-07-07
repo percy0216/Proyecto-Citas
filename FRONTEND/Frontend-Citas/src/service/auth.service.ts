@@ -45,6 +45,7 @@ export class AuthService {
 
     logout() {
         localStorage.removeItem('token');
+        localStorage.removeItem('tipo_usuario');
     }
 
     getPerfil() {

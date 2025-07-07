@@ -17,7 +17,7 @@ export class AdminGuard implements CanActivate {
       
     }
 
-    this.router.navigate(['/panel-admin-9472']);
+    this.router.navigate(['/index']);
          
     return false;
   }
