@@ -1,81 +1,142 @@
 <div *ngIf="esAdmin">
-<div class="p-5">
-  <h2 class="mb-4">Bienvenido Administrador</h2>
-  <button  (click)="cerrarSesion()">Cerrar Sesión</button>
-  <h4>Usuarios registrados:</h4>
+  <div class="p-5">
+    <h2 class="mb-4">Bienvenido Administrador</h2>
+    <button (click)="cerrarSesion()">Cerrar Sesión</button>
 
-  <table class="table table-bordered mt-3">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Usuario</th>
-        <th>Nombre</th>
-        <th>Apellido</th>
-        <th>DNI</th>
-        <th>Tipo</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let usuario of usuarios">
-        <td>{{ usuario.id }}</td>
-        <td>{{ usuario.username }}</td>
-        <td>{{ usuario.nombre }}</td>
-        <td>{{ usuario.apellido }}</td>
-        <td>{{ usuario.dni }}</td>
-        <td>{{ usuario.tipo_usuario }}</td>
-        <td>
-          <button pButton icon="pi pi-eye" class="p-button-text p-button-sm" (click)="verUsuario(usuario)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-text p-button-sm" (click)="eliminarUsuario(usuario.id)"></button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+    <!-- Botón para registrar médico -->
+    <button pButton label="Añadir médico" class="p-button-success mt-3 mb-3" (click)="abrirModalMedico()"></button>
 
+    <!-- Botón para registrar especialidad -->
+    <button pButton label="Añadir especialidad" class="p-button-secondary mt-3 mb-3 ml-2" (click)="mostrarFormularioEspecialidad = true"></button>
 
-<p-dialog header="Detalles del Usuario" [(visible)]="mostrarmodal" [modal]="true" [style]="{width: '70vw'}" (onHide)="cerrarModal()">
-  <div *ngIf="usuarioseleccionado && !editando">
-    <p><strong>Nombre:</strong> {{ usuarioseleccionado.nombre }}</p>
-    <p><strong>Apellido:</strong> {{ usuarioseleccionado.apellido }}</p>
-    <p><strong>DNI:</strong> {{ usuarioseleccionado.dni }}</p>
-    <p><strong>Correo:</strong> {{ usuarioseleccionado.email }}</p>
-    <p><strong>Teléfono:</strong> {{ usuarioseleccionado.telefono }}</p>
-    <p><strong>Tipo de Usuario:</strong> {{ usuarioseleccionado.tipo_usuario }}</p>
-
-    <!-- Botón para habilitar edición -->
-    <button pButton label="Editar" class="p-button-warning mt-3" (click)="habilitarEdicion()"></button>
+    <h4>Usuarios registrados:</h4>
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>DNI</th>
+          <th>Tipo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.username }}</td>
+          <td>{{ usuario.nombre }}</td>
+          <td>{{ usuario.apellido }}</td>
+          <td>{{ usuario.dni }}</td>
+          <td>{{ usuario.tipo_usuario }}</td>
+          <td>
+            <button pButton icon="pi pi-eye" class="p-button-text p-button-sm" (click)="verUsuario(usuario)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-text p-button-sm" (click)="eliminarUsuario(usuario.id)"></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <div *ngIf="editando">
-    <div class="p-field">
-      <label>Nombre</label>
-      <input pInputText [(ngModel)]="usuarioseleccionado!.nombre" />
-    </div>
-    <div class="p-field">
-      <label>Apellido</label>
-      <input pInputText [(ngModel)]="usuarioseleccionado!.apellido" />
-    </div>
-    <div class="p-field">
-      <label>DNI</label>
-      <input pInputText [(ngModel)]="usuarioseleccionado!.dni" />
-    </div>
-    <div class="p-field">
-      <label>Correo</label>
-      <input pInputText [(ngModel)]="usuarioseleccionado!.email" />
-    </div>
-    <div class="p-field">
-      <label>Teléfono</label>
-      <input pInputText [(ngModel)]="usuarioseleccionado!.telefono" />
+  <!-- Modal Detalles del Usuario -->
+  <p-dialog header="Detalles del Usuario" [(visible)]="mostrarmodal" [modal]="true" [style]="{width: '70vw'}" (onHide)="cerrarModal()">
+    <div *ngIf="usuarioseleccionado && !editando">
+      <p><strong>Nombre:</strong> {{ usuarioseleccionado.nombre }}</p>
+      <p><strong>Apellido:</strong> {{ usuarioseleccionado.apellido }}</p>
+      <p><strong>DNI:</strong> {{ usuarioseleccionado.dni }}</p>
+      <p><strong>Correo:</strong> {{ usuarioseleccionado.email }}</p>
+      <p><strong>Teléfono:</strong> {{ usuarioseleccionado.telefono }}</p>
+      <p><strong>Tipo de Usuario:</strong> {{ usuarioseleccionado.tipo_usuario }}</p>
+      <button pButton label="Editar" class="p-button-warning mt-3" (click)="habilitarEdicion()"></button>
     </div>
 
-    <button pButton label="Guardar" class="p-button-success mt-2" (click)="guardarCambios()"></button>
-    <button pButton label="Cancelar" class="p-button-secondary mt-2 ml-2" (click)="cancelarEdicion()"></button>
-  </div>
-</p-dialog>
+    <div *ngIf="editando">
+      <div class="p-field">
+        <label>Nombre</label>
+        <input pInputText [(ngModel)]="usuarioseleccionado!.nombre" />
+      </div>
+      <div class="p-field">
+        <label>Apellido</label>
+        <input pInputText [(ngModel)]="usuarioseleccionado!.apellido" />
+      </div>
+      <div class="p-field">
+        <label>DNI</label>
+        <input pInputText [(ngModel)]="usuarioseleccionado!.dni" />
+      </div>
+      <div class="p-field">
+        <label>Correo</label>
+        <input pInputText [(ngModel)]="usuarioseleccionado!.email" />
+      </div>
+      <div class="p-field">
+        <label>Teléfono</label>
+        <input pInputText [(ngModel)]="usuarioseleccionado!.telefono" />
+      </div>
+      <button pButton label="Guardar" class="p-button-success mt-2" (click)="guardarCambios()"></button>
+      <button pButton label="Cancelar" class="p-button-secondary mt-2 ml-2" (click)="cancelarEdicion()"></button>
+    </div>
+  </p-dialog>
 
-</div>
+  <!-- Modal para Añadir Médico -->
+  <p-dialog header="Registrar Médico" [(visible)]="mostrarModalMedico" [modal]="true" [style]="{width: '40vw'}" (onHide)="cerrarModalMedico()">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label>Nombre</label>
+        <input pInputText [(ngModel)]="nuevoMedico.usuario.nombre" />
+      </div>
+      <div class="p-field">
+        <label>Apellido</label>
+        <input pInputText [(ngModel)]="nuevoMedico.usuario.apellido" />
+      </div>
+      <div class="p-field">
+        <label>Username</label>
+        <input pInputText [(ngModel)]="nuevoMedico.usuario.username" />
+      </div>
+      <div class="p-field">
+        <label>Contraseña</label>
+        <input pInputText type="password" [(ngModel)]="nuevoMedico.usuario.password" />
+      </div>
+      <div class="p-field">
+        <label>DNI</label>
+        <input pInputText [(ngModel)]="nuevoMedico.usuario.dni" />
+      </div>
+      <div class="p-field">
+        <label>Correo</label>
+        <input pInputText [(ngModel)]="nuevoMedico.usuario.email" />
+      </div>
+      <div class="p-field">
+        <label>Teléfono</label>
+        <input pInputText [(ngModel)]="nuevoMedico.usuario.telefono" />
+      </div>
+      <div class="p-field">
+        <label>Especialidad</label>
+        <select [(ngModel)]="nuevoMedico.especialidad">
+          <option *ngFor="let esp of especialidades" [value]="esp.id">{{ esp.nombre }}</option>
+        </select>
+      </div>
+      <div class="p-field">
+        <label>Horario Libre</label>
+        <input pInputText [(ngModel)]="nuevoMedico.horario_libre" />
+      </div>
+    </div>
+    <button pButton label="Registrar" class="p-button-success mt-2" (click)="registrarMedico()"></button>
+  </p-dialog>
 
-<div class="p-5">
-  <h4>Citas registradas:</h4>
+  <!-- Modal para Añadir Especialidad -->
+  <p-dialog header="Registrar Especialidad" [(visible)]="mostrarFormularioEspecialidad" [modal]="true" [style]="{width: '30vw'}" (onHide)="cancelarEspecialidad()">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" pInputText [(ngModel)]="nuevaEspecialidad.nombre" />
+      </div>
+
+      <div class="p-field">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" pInputTextarea [(ngModel)]="nuevaEspecialidad.descripcion"></textarea>
+      </div>
+
+      <button pButton label="Registrar" class="p-button-success mt-3" (click)="registrarEspecialidad()"></button>
+      <button pButton label="Cancelar" class="p-button-secondary mt-3 ml-2" (click)="cancelarEspecialidad()"></button>
+    </div>
+  </p-dialog>
 </div>

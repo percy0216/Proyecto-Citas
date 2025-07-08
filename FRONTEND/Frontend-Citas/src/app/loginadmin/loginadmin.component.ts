@@ -4,6 +4,7 @@ import { AuthService } from '../../service/auth.service';
 import { Router } from '@angular/router';
 import { Usuario } from '../../models/usuario.models';
 import { ApiService } from '../../service/api.service';
+import { Especialidad } from '../../models/especialidad.models';
 
 @Component({
   selector: 'app-loginadmin',
@@ -17,16 +18,50 @@ export class LoginadminComponent implements OnInit {
   editando: boolean = false;
   usuarios: any[] = [];
   esAdmin: boolean = false;
-  
-  constructor(private http: HttpClient, private auth: AuthService, private router: Router,private apiservice: ApiService) {}
+
+  // ===== MÉDICO =====
+  mostrarModalMedico: boolean = false;
+  especialidades: Especialidad[] = [];
+  nuevoMedico: any = {
+    usuario: {
+      nombre: '',
+      apellido: '',
+      username: '',
+      password: '',
+      dni: '',
+      email: '',
+      telefono: '',
+      tipo_usuario: 'medico'
+    },
+    especialidad: null,
+    horario_libre: ''
+  };
+
+  // ===== ESPECIALIDAD =====
+  mostrarFormularioEspecialidad: boolean = false;
+  nuevaEspecialidad: Especialidad = {
+    id: 0,
+    nombre: '',
+    descripcion: ''
+  };
+
+  constructor(
+    private http: HttpClient,
+    private auth: AuthService,
+    private router: Router,
+    private apiservice: ApiService
+  ) {}
 
   ngOnInit(): void {
-
     const tipo = this.auth.getTipoUsuario();
 
     if (tipo === 'admin') {
       this.esAdmin = true;
       this.cargarUsuarios();
+      this.apiservice.getEspecialidades().subscribe({
+        next: data => this.especialidades = data,
+        error: err => console.error('Error al cargar especialidades:', err)
+      });
     } else {
       alert('No tienes permisos para acceder a esta página');
       this.router.navigate(['/login']);
@@ -41,9 +76,8 @@ export class LoginadminComponent implements OnInit {
   }
 
   verUsuario(usuario: any): void {
-      console.log('Ver usuario:', usuario);
-      this.usuarioseleccionado = usuario;
-      this.mostrarmodal = true;
+    this.usuarioseleccionado = usuario;
+    this.mostrarmodal = true;
   }
 
   cerrarModal(): void {
@@ -60,26 +94,24 @@ export class LoginadminComponent implements OnInit {
   }
 
   guardarCambios() {
-  if (this.usuarioseleccionado) {
-    this.apiservice.putUsuario( this.usuarioseleccionado).subscribe({
-      next: () => {
-        this.editando = false;
-        alert('Usuario actualizado correctamente');
-      },
-      error: () => {
-        alert('Error al actualizar usuario');
-      }
-    });
+    if (this.usuarioseleccionado) {
+      this.apiservice.putUsuario(this.usuarioseleccionado).subscribe({
+        next: () => {
+          this.editando = false;
+          alert('Usuario actualizado correctamente');
+        },
+        error: () => {
+          alert('Error al actualizar usuario');
+        }
+      });
+    }
   }
-}
-  
 
   eliminarUsuario(id: number): void {
-  if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
       this.http.delete(`http://127.0.0.1:8000/api/usuario/${id}/`).subscribe({
         next: () => {
-          console.log('Usuario eliminado');
-          this.cargarUsuarios(); 
+          this.cargarUsuarios();
         },
         error: err => console.error('Error al eliminar:', err)
       });
@@ -91,5 +123,73 @@ export class LoginadminComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  
+  // ========== MÉDICO ==========
+  abrirModalMedico() {
+    this.mostrarModalMedico = true;
+  }
+
+  cerrarModalMedico() {
+    this.mostrarModalMedico = false;
+    this.resetFormularioMedico();
+  }
+
+  resetFormularioMedico() {
+    this.nuevoMedico = {
+      usuario: {
+        nombre: '',
+        apellido: '',
+        username: '',
+        password: '',
+        dni: '',
+        email: '',
+        telefono: '',
+        tipo_usuario: 'medico'
+      },
+      especialidad: null,
+      horario_libre: ''
+    };
+  }
+
+  registrarMedico() {
+    if (!this.nuevoMedico.usuario.username || !this.nuevoMedico.usuario.password || !this.nuevoMedico.especialidad) {
+      alert('Completa los campos obligatorios');
+      return;
+    }
+
+    this.apiservice.postMedico(this.nuevoMedico).subscribe({
+      next: () => {
+        alert('Médico registrado correctamente');
+        this.cerrarModalMedico();
+        this.cargarUsuarios();
+      },
+      error: () => {
+        alert('Error al registrar médico');
+      }
+    });
+  }
+
+  // ========== ESPECIALIDAD ==========
+  registrarEspecialidad() {
+    if (!this.nuevaEspecialidad.nombre || !this.nuevaEspecialidad.descripcion) {
+      alert('Por favor, completa todos los campos');
+      return;
+    }
+
+    this.apiservice.postEspecialidad(this.nuevaEspecialidad).subscribe({
+      next: () => {
+        alert('Especialidad registrada correctamente');
+        this.mostrarFormularioEspecialidad = false;
+        this.nuevaEspecialidad = { id: 0, nombre: '', descripcion: '' };
+        this.apiservice.getEspecialidades().subscribe(data => this.especialidades = data); // refresca lista
+      },
+      error: () => {
+        alert('Error al registrar especialidad');
+      }
+    });
+  }
+
+  cancelarEspecialidad() {
+    this.mostrarFormularioEspecialidad = false;
+    this.nuevaEspecialidad = { id: 0, nombre: '', descripcion: '' };
+  }
 }

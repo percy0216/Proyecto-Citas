@@ -11,7 +11,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import CitaSerializers, PacienteRegistroSerializer
+from .serializers import CitaSerializers, PacienteRegistroSerializer, MedicoRegistroSerializer
+
 
 import requests
 
@@ -105,9 +106,13 @@ class EspecialidadViewsets(viewsets.ModelViewSet):
 
 class MedicoViewsets(viewsets.ModelViewSet):
     queryset = models.Medico.objects.all()
-    serializer_class = serializers.MedicoSerializers
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['especialidad']
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return serializers.MedicoRegistroSerializer
+        return serializers.MedicoSerializers
 
 
 class HorarioViewsets(viewsets.ModelViewSet):

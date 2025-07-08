@@ -129,8 +129,8 @@ export class ApiService {
     }
 
     public postEspecialidad(especialidad: Especialidad): Observable<Especialidad> {
-        let body = JSON.stringify(especialidad);
-        return this.http.post<Especialidad>(this.ApiUrl + 'especialidad/', body, this.httpOptions);
+    let body = JSON.stringify(especialidad);
+    return this.http.post<Especialidad>(this.ApiUrl + 'especialidad/', body, this.httpOptions);
     }
 
     // =============================== REGISTRO VISITAS================================
