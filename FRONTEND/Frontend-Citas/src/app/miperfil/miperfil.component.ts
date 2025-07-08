@@ -13,7 +13,6 @@ import { ApiService } from '../../service/api.service';
 export class MiperfilComponent {
   perfilForm!: FormGroup;
   modoEdicion: boolean = false;
-  usuarioId: number = 0; // Puse el ID separado para evitar errores
 
   datosOriginales: {
     first_name: string;
@@ -21,12 +20,14 @@ export class MiperfilComponent {
     email: string;
     dni: string;
     telefono: string;
+    direccion: string;
   } = {
     first_name: '',
     last_name: '',
     email: '',
     dni: '',
-    telefono: ''
+    telefono: '',
+    direccion: ''
   };
 
   constructor(
@@ -39,14 +40,14 @@ export class MiperfilComponent {
   ngOnInit(): void {
     const userData = localStorage.getItem('usuario');
     const usuario = userData ? JSON.parse(userData) : {};
-    this.usuarioId = usuario.id || 0; // aqui guarda el ID original
 
     this.perfilForm = this.fb.group({
       first_name: [usuario.first_name || ''],
       last_name: [usuario.last_name || ''],
       email: [usuario.email || ''],
       dni: [usuario.dni || ''],
-      telefono: [usuario.telefono || '']
+      telefono: [usuario.telefono || ''],
+      direccion: [usuario.direccion || '']
     });
 
     this.datosOriginales = { ...this.perfilForm.value };
@@ -64,13 +65,16 @@ export class MiperfilComponent {
 
   guardarCambios() {
     if (this.perfilForm.valid) {
-      if (!this.usuarioId) {
+      const usuarioOriginal = localStorage.getItem('usuario');
+      const datosCompletos = usuarioOriginal ? JSON.parse(usuarioOriginal) : null;
+
+      if (!datosCompletos || !datosCompletos.id) {
         alert('No se pudo identificar al usuario.');
         return;
       }
 
       const datosActualizados = {
-        id: this.usuarioId,
+        ...datosCompletos,
         ...this.perfilForm.value
       };
 

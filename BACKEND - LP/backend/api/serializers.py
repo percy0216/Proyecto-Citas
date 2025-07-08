@@ -7,9 +7,26 @@ class UsuarioSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 class PerfilUsuarioSerializer(serializers.ModelSerializer):
+    direccion = serializers.CharField(source='paciente.direccion', allow_blank=True, required=False)
+
     class Meta:
         model = models.Usuario
-        fields = ['first_name', 'last_name', 'email', 'dni', 'telefono']
+        fields = ['first_name', 'last_name', 'email', 'dni', 'telefono', 'direccion']
+
+    def update(self, instance, validated_data):
+        paciente_data = validated_data.pop('paciente', {})
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.dni = validated_data.get('dni', instance.dni)
+        instance.telefono = validated_data.get('telefono', instance.telefono)
+        instance.save()
+
+        if hasattr(instance, 'paciente') and paciente_data:
+            instance.paciente.direccion = paciente_data.get('direccion', instance.paciente.direccion)
+            instance.paciente.save()
+
+        return instance
 
 
 class PacienteSerializers(serializers.ModelSerializer):
