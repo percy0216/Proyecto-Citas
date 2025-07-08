@@ -10,24 +10,24 @@
       </div>
 
       <form class="registro-form" [formGroup]="registroForm" (ngSubmit)="registrar()">
-        
+
         <!-- Información Personal -->
         <div class="form-section">
           <h3 class="section-title">
             <i class="pi pi-user"></i>
             Información Personal
           </h3>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label for="nombre" class="form-label">
                 <i class="pi pi-user"></i>
                 Nombre
               </label>
-              <input 
-                id="nombre" 
-                pInputText 
-                formControlName="nombre" 
+              <input
+                id="nombre"
+                pInputText
+                formControlName="nombre"
                 class="form-input"
                 placeholder="Ingresa tu nombre" />
             </div>
@@ -37,10 +37,10 @@
                 <i class="pi pi-user"></i>
                 Apellido
               </label>
-              <input 
-                id="apellido" 
-                pInputText 
-                formControlName="apellido" 
+              <input
+                id="apellido"
+                pInputText
+                formControlName="apellido"
                 class="form-input"
                 placeholder="Ingresa tu apellido" />
             </div>
@@ -52,10 +52,10 @@
                 <i class="pi pi-id-card"></i>
                 DNI
               </label>
-              <input 
-                id="dni" 
-                pInputText 
-                formControlName="dni" 
+              <input
+                id="dni"
+                pInputText
+                formControlName="dni"
                 class="form-input"
                 placeholder="12345678" />
             </div>
@@ -65,11 +65,11 @@
                 <i class="pi pi-calendar"></i>
                 Fecha de Nacimiento
               </label>
-              <input 
-                id="fecha_nacimiento" 
-                type="date" 
-                pInputText 
-                formControlName="fecha_nacimiento" 
+              <input
+                id="fecha_nacimiento"
+                type="date"
+                pInputText
+                formControlName="fecha_nacimiento"
                 class="form-input" />
             </div>
           </div>
@@ -81,17 +81,17 @@
             <i class="pi pi-envelope"></i>
             Información de Contacto
           </h3>
-          
+
           <div class="form-group">
-            <label for="correo" class="form-label">
+            <label for="email" class="form-label">
               <i class="pi pi-envelope"></i>
               Correo Electrónico
             </label>
-            <input 
-              id="correo" 
-              pInputText 
-              type="email" 
-              formControlName="correo" 
+            <input
+              id="email"
+              pInputText
+              type="email"
+              formControlName="email"
               class="form-input"
               placeholder="ejemplo@correo.com" />
           </div>
@@ -102,10 +102,10 @@
                 <i class="pi pi-phone"></i>
                 Teléfono
               </label>
-              <input 
-                id="telefono" 
-                pInputText 
-                formControlName="telefono" 
+              <input
+                id="telefono"
+                pInputText
+                formControlName="telefono"
                 class="form-input"
                 placeholder="+54 9 11 1234-5678" />
             </div>
@@ -115,10 +115,10 @@
                 <i class="pi pi-map-marker"></i>
                 Dirección
               </label>
-              <input 
-                id="direccion" 
-                pInputText 
-                formControlName="direccion" 
+              <input
+                id="direccion"
+                pInputText
+                formControlName="direccion"
                 class="form-input"
                 placeholder="Tu dirección" />
             </div>
@@ -131,16 +131,16 @@
             <i class="pi pi-lock"></i>
             Información de Cuenta
           </h3>
-          
+
           <div class="form-group">
             <label for="username" class="form-label">
               <i class="pi pi-at"></i>
               Nombre de Usuario
             </label>
-            <input 
-              id="username" 
-              pInputText 
-              formControlName="username" 
+            <input
+              id="username"
+              pInputText
+              formControlName="username"
               class="form-input"
               placeholder="Elige un nombre de usuario" />
           </div>
@@ -150,11 +150,11 @@
               <i class="pi pi-lock"></i>
               Contraseña
             </label>
-            <input 
-              id="password" 
-              type="password" 
-              pInputText 
-              formControlName="password" 
+            <input
+              id="password"
+              type="password"
+              pInputText
+              formControlName="password"
               class="form-input"
               placeholder="Crea una contraseña segura" />
           </div>

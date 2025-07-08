@@ -13,6 +13,7 @@ import { ApiService } from '../../service/api.service';
 export class MiperfilComponent {
   perfilForm!: FormGroup;
   modoEdicion: boolean = false;
+  usuarioId: number = 0; // Puse el ID separado para evitar errores
 
   datosOriginales: {
     first_name: string;
@@ -38,6 +39,7 @@ export class MiperfilComponent {
   ngOnInit(): void {
     const userData = localStorage.getItem('usuario');
     const usuario = userData ? JSON.parse(userData) : {};
+    this.usuarioId = usuario.id || 0; // aqui guarda el ID original
 
     this.perfilForm = this.fb.group({
       first_name: [usuario.first_name || ''],
@@ -62,16 +64,13 @@ export class MiperfilComponent {
 
   guardarCambios() {
     if (this.perfilForm.valid) {
-      const usuarioOriginal = localStorage.getItem('usuario');
-      const datosCompletos = usuarioOriginal ? JSON.parse(usuarioOriginal) : null;
-
-      if (!datosCompletos || !datosCompletos.id) {
+      if (!this.usuarioId) {
         alert('No se pudo identificar al usuario.');
         return;
       }
 
       const datosActualizados = {
-        ...datosCompletos,
+        id: this.usuarioId,
         ...this.perfilForm.value
       };
 
