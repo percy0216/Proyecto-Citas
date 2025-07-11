@@ -1,17 +1,21 @@
 from django.shortcuts import render
-from . import models,serializers
+from . import models, serializers
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate
 from rest_framework import status
-from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.permissions import IsAuthenticated
-from .serializers import CitaSerializers
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from .serializers import CitaSerializers, PacienteRegistroSerializer, MedicoRegistroSerializer
+
+
+import requests
+
 
 class ReservarCitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -23,90 +27,130 @@ class ReservarCitaView(APIView):
             return Response({"mensaje": "Cita reservada correctamente"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # api_key = request.headers.get('x-api-key')
-        # if api_key != settings.API_KEY:
-        #     return Response({"error": "API Key Invalida"}, status=403)
         username = request.data.get("username")
         password = request.data.get("password")
         user = authenticate(username=username, password=password)
+
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({"token": token.key})
+
+            # Obtener la direccion solo si es paciente
+            direccion = None
+            if hasattr(user, 'paciente'):
+                direccion = user.paciente.direccion
+
+            return Response({
+                "token": token.key,
+                'usuario': {
+                    'id': user.id,
+                    'username': user.username,
+                    'first_name': user.nombre,
+                    'last_name': user.apellido,
+                    'email': user.email,
+                    'dni': user.dni,
+                    'telefono': user.telefono,
+                    'direccion': direccion,
+                    'tipo_usuario': user.tipo_usuario
+                }
+            })
         else:
             return Response({"error": "Credenciales Invalidas"}, status=400)
-        
 
-User = get_user_model()
+
 @method_decorator(csrf_exempt, name='dispatch')
-class RegistroView(APIView):
+class RegistroPacienteView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        data = request.data
-
-        try:
-            # Crea el usuario con campos requeridos
-            user = User.objects.create_user(
-                username=data.get('username'),
-                email=data.get('correo'),
-                password=data.get('password')
-            )
-
-            # Asigna campos personalizados
-            user.nombre = data.get('nombre')
-            user.apellido = data.get('apellido')
-            user.dni = data.get('dni')
-            user.telefono = data.get('telefono')
-            user.tipo_usuario = 'paciente'  # Fijo
-
-            user.save()
-
-            return Response({"mensaje": "Usuario creado correctamente"}, status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = PacienteRegistroSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'mensaje': 'Paciente registrado correctamente'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-class UsuarioViewsets (viewsets.ModelViewSet):
+class UsuarioViewsets(viewsets.ModelViewSet):
     queryset = models.Usuario.objects.all()
-    serializer_class = serializers.UsuarioSerializers
+
+    def get_serializer_class(self):
+        if self.action in ['update', 'partial_update']:
+            return serializers.PerfilUsuarioSerializer
+        return serializers.UsuarioSerializers
 
 
-class PacienteViewsets (viewsets.ModelViewSet):
+class PacienteViewsets(viewsets.ModelViewSet):
     queryset = models.Paciente.objects.all()
     serializer_class = serializers.PacienteSerializers
 
 
-class EspecialidadViewsets (viewsets.ModelViewSet):
+class PacienteIdView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            paciente = models.Paciente.objects.get(usuario=request.user)
+            return Response({'paciente_id': paciente.id}, status=status.HTTP_200_OK)
+        except models.Paciente.DoesNotExist:
+            return Response({'error': 'No es un paciente'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class EspecialidadViewsets(viewsets.ModelViewSet):
     queryset = models.Especialidad.objects.all()
     serializer_class = serializers.EspecialidadSerializers
 
 
-class MedicoViewsets (viewsets.ModelViewSet):
+class MedicoViewsets(viewsets.ModelViewSet):
     queryset = models.Medico.objects.all()
-    serializer_class = serializers.MedicoSerializers
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['especialidad']
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return serializers.MedicoRegistroSerializer
+        return serializers.MedicoSerializers
 
 
-class CitaViewsets (viewsets.ModelViewSet):
-    queryset = models.Cita.objects.all()
-    serializer_class = serializers.CitaSerializers
+class HorarioViewsets(viewsets.ModelViewSet):
+    queryset = models.Horario.objects.all()
+    serializer_class = serializers.HorarioSerializers
 
 
-class RegistroVisitasViewsets (viewsets.ModelViewSet):
+class CitaViewsets(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.tipo_usuario == 'admin':
+            return models.Cita.objects.all()
+
+        try:
+            paciente = models.Paciente.objects.get(usuario=user)
+            return models.Cita.objects.filter(paciente=paciente)
+        except models.Paciente.DoesNotExist:
+            return models.Cita.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return serializers.CitaReadSerializers
+        return serializers.CitaSerializers
+
+
+class RegistroVisitasViewsets(viewsets.ModelViewSet):
     queryset = models.RegistroVisitas.objects.all()
     serializer_class = serializers.RegistroVisitasSerializers
 
 
-class AdministradorViewsets (viewsets.ModelViewSet):
+class AdministradorViewsets(viewsets.ModelViewSet):
     queryset = models.Administrador.objects.all()
     serializer_class = serializers.AdministradorSerializers
 
 
-class HistorialMedicoViewsets (viewsets.ModelViewSet):
+class HistorialMedicoViewsets(viewsets.ModelViewSet):
     queryset = models.HistorialMedico.objects.all()
     serializer_class = serializers.HistorialMedicoSerializers

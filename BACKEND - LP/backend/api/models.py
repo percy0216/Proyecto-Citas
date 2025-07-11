@@ -102,6 +102,22 @@ class Medico(models.Model):
 
     def __str__(self):
         return self.usuario.nombre
+    
+DIAS_SEMANA = [
+    ('lunes', 'Lunes'),
+    ('martes', 'Martes'),
+    ('miércoles', 'Miércoles'),
+    ('jueves', 'Jueves'),
+    ('viernes', 'Viernes'),
+    ('sábado', 'Sábado'),
+    ('domingo', 'Domingo'),
+]
+
+class Horario(models.Model):
+    medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
+    dia_semana = models.CharField(max_length=10, choices=DIAS_SEMANA)
+    hora_imicio = models.TimeField() 
+    hora_final = models.TimeField()
 
 
 # Representa una cita médica entre un paciente y un médico.
@@ -164,3 +180,7 @@ class HistorialMedico(models.Model):
     observaciones = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
 
+
+# class UnidadMedida(models.Model):
+#     unidad = models.CharField(max_length=20)
+#     sigla = models.CharField(max_length=5)
