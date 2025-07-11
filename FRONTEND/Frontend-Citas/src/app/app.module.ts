@@ -12,6 +12,8 @@ import { InputTextModule }   from 'primeng/inputtext';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogModule } from 'primeng/dialog';
+import { RouterModule } from '@angular/router';
+
 
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
