@@ -12,7 +12,7 @@ router.register('cita', views.CitaViewsets, basename='cita')
 router.register('registrovisitas', views.RegistroVisitasViewsets)
 router.register('administrador', views.AdministradorViewsets)
 router.register('historialmedico', views.HistorialMedicoViewsets)
-router.register('horario', views.HorarioViewsets)
+router.register('horario', views.HorarioViewSets)
 
 urlpatterns = [
     path('', include(router.urls)),

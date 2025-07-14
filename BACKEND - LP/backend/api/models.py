@@ -88,13 +88,12 @@ class Especialidad(models.Model):
 class Medico(models.Model):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     especialidad = models.ForeignKey(Especialidad, on_delete=models.CASCADE)
-    horario_libre = models.TextField(blank=True, null=True)
+    
+    # Ya no se necesita horario_libre: lo quitamos
 
-    # Devuelve todas las citas asignadas al médico
     def ver_citas_asignadas(self):
         return self.cita_set.all()
 
-    # Registra la atención a un paciente y actualiza el estado de la cita
     def registrar_atencion(self, cita, observaciones):
         HistorialMedico.objects.create(paciente=cita.paciente, observaciones=observaciones)
         cita.estado = 'atendida'
@@ -116,8 +115,12 @@ DIAS_SEMANA = [
 class Horario(models.Model):
     medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
     dia_semana = models.CharField(max_length=10, choices=DIAS_SEMANA)
-    hora_imicio = models.TimeField() 
+    hora_inicio = models.TimeField() 
     hora_final = models.TimeField()
+
+    def __str__(self):
+        return f"{self.medico} - {self.dia_semana} ({self.hora_inicio} - {self.hora_final})"
+
 
 
 # Representa una cita médica entre un paciente y un médico.

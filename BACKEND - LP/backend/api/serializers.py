@@ -10,17 +10,21 @@ class UsuarioSerializers(serializers.ModelSerializer):
         model = models.Usuario
         fields = '__all__'
 
+    def create(self, validated_data):
+        # Esto asegura que se use create_user (que hashea la contraseña)
+        return models.Usuario.objects.create_user(**validated_data)
+
 class PerfilUsuarioSerializer(serializers.ModelSerializer):
     direccion = serializers.CharField(source='paciente.direccion', allow_blank=True, required=False)
 
     class Meta:
         model = models.Usuario
-        fields = ['id', 'first_name', 'last_name', 'email', 'dni', 'telefono', 'direccion']
+        fields = ['id', 'nombre', 'apellido', 'email', 'dni', 'telefono', 'direccion']
 
     def update(self, instance, validated_data):
         paciente_data = validated_data.pop('paciente', {})
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.nombre = validated_data.get('nombre', instance.nombre)
+        instance.apellido = validated_data.get('apellido', instance.apellido)
         instance.email = validated_data.get('email', instance.email)
         instance.dni = validated_data.get('dni', instance.dni)
         instance.telefono = validated_data.get('telefono', instance.telefono)
@@ -69,7 +73,7 @@ class MedicoSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = models.Medico
-        fields = ["id", "usuario", "horario_libre", "especialidad"]
+        fields = '__all__'
 
 class MedicoRegistroSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializers()
@@ -77,7 +81,7 @@ class MedicoRegistroSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Medico
-        fields = ["id", "usuario", "horario_libre", "especialidad"]
+        fields = ["id", "usuario", "especialidad"]
 
     def create(self, validated_data):
         usuario_data = validated_data.pop('usuario')
@@ -85,12 +89,22 @@ class MedicoRegistroSerializer(serializers.ModelSerializer):
         usuario_data['tipo_usuario'] = 'medico'
         user = models.Usuario.objects.create_user(password=password, **usuario_data)
         return models.Medico.objects.create(usuario=user, **validated_data)
+    
+
+class MedicoPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Medico
+        fields = ['id', 'usuario', 'especialidad']
+
+
 
 # ========================== HORARIO ==========================
 
 class HorarioSerializers(serializers.ModelSerializer):
+    medico_nombre = serializers.CharField(source='medico.usuario.nombre', read_only=True)
+
     class Meta:
-        model = models.Medico
+        model = models.Horario
         fields = '__all__'
 
 # ========================== CITA ==========================

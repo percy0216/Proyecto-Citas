@@ -12,8 +12,10 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import CitaSerializers, PacienteRegistroSerializer, MedicoRegistroSerializer
-
-
+from datetime import datetime, timedelta, date
+from django.utils import timezone
+from rest_framework.decorators import action
+from rest_framework import status, viewsets
 import requests
 
 
@@ -111,14 +113,25 @@ class MedicoViewsets(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'create':
-            return serializers.MedicoRegistroSerializer
+            return serializers.MedicoPostSerializer
         return serializers.MedicoSerializers
 
 
-class HorarioViewsets(viewsets.ModelViewSet):
+class HorarioViewSets(viewsets.ModelViewSet):
     queryset = models.Horario.objects.all()
     serializer_class = serializers.HorarioSerializers
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['medico', 'dia_semana']
 
+
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from django.utils.dateparse import parse_date
+from datetime import datetime, time, timedelta
+
+from . import models, serializers
 
 class CitaViewsets(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
@@ -140,6 +153,84 @@ class CitaViewsets(viewsets.ModelViewSet):
             return serializers.CitaReadSerializers
         return serializers.CitaSerializers
 
+    def create(self, request, *args, **kwargs):
+        fecha = request.data.get('fecha')
+        hora = request.data.get('hora')
+        medico_id = request.data.get('medico')
+
+        if not fecha or not hora or not medico_id:
+            return Response({'error': 'Faltan datos obligatorios.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verificar si ya existe una cita para ese médico en esa fecha y hora
+        cita_existente = models.Cita.objects.filter(
+            fecha=fecha,
+            hora=hora,
+            medico_id=medico_id
+        ).exists()
+
+        if cita_existente:
+            return Response(
+                {'error': 'Ya existe una cita con este médico en esa fecha y hora.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=['get'], url_path='horas-disponibles')
+    def horas_disponibles(self, request):
+        fecha_str = request.query_params.get('fecha')
+        medico_id = request.query_params.get('medico_id')
+
+        if not fecha_str or not medico_id:
+            return Response({'error': 'Faltan parámetros.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Convertir fecha y obtener día en español
+        try:
+            fecha = datetime.strptime(fecha_str, "%Y-%m-%d")
+        except ValueError:
+            return Response({'error': 'Formato de fecha inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        DIA_TRADUCCION = {
+            "monday": "lunes",
+            "tuesday": "martes",
+            "wednesday": "miércoles",
+            "thursday": "jueves",
+            "friday": "viernes",
+            "saturday": "sábado",
+            "sunday": "domingo"
+        }
+
+        dia_semana_ingles = fecha.strftime("%A").lower()
+        dia_semana = DIA_TRADUCCION.get(dia_semana_ingles)
+
+        if not dia_semana:
+            return Response({'error': 'Día de la semana no válido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Buscar horarios
+        try:
+            medico = models.Medico.objects.get(id=medico_id)
+        except models.Medico.DoesNotExist:
+            return Response({'error': 'Médico no encontrado.'}, status=status.HTTP_404_NOT_FOUND)
+
+        horarios = models.Horario.objects.filter(medico=medico, dia_semana=dia_semana)
+
+        if not horarios.exists():
+            return Response({'horas': []})  # No hay horarios ese día
+
+        # Filtrar las horas ya reservadas
+        horas_ocupadas = models.Cita.objects.filter(
+            medico=medico, fecha=fecha
+        ).values_list('hora', flat=True)
+
+        horas_disponibles = []
+        for horario in horarios:
+            hora_actual = horario.hora_inicio
+            while hora_actual < horario.hora_final:
+                if hora_actual not in horas_ocupadas:
+                    horas_disponibles.append(hora_actual.strftime("%H:%M"))
+                hora_actual = (datetime.combine(fecha, hora_actual) + timedelta(minutes=30)).time()
+
+        return Response({'horas': horas_disponibles})
 
 class RegistroVisitasViewsets(viewsets.ModelViewSet):
     queryset = models.RegistroVisitas.objects.all()
