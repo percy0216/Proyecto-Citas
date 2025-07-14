@@ -15,15 +15,15 @@ export class MiperfilComponent {
   modoEdicion: boolean = false;
 
   datosOriginales: {
-    first_name: string;
-    last_name: string;
+    nombre: string;
+    apellido: string;
     email: string;
     dni: string;
     telefono: string;
     direccion: string;
   } = {
-    first_name: '',
-    last_name: '',
+    nombre: '',
+    apellido: '',
     email: '',
     dni: '',
     telefono: '',
@@ -42,8 +42,8 @@ export class MiperfilComponent {
     const usuario = userData ? JSON.parse(userData) : {};
 
     this.perfilForm = this.fb.group({
-      first_name: [usuario.first_name || ''],
-      last_name: [usuario.last_name || ''],
+      nombre: [usuario.first_name || ''],
+      apellido: [usuario.last_name || ''],
       email: [usuario.email || ''],
       dni: [usuario.dni || ''],
       telefono: [usuario.telefono || ''],

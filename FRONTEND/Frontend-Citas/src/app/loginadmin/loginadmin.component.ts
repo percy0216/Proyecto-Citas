@@ -5,6 +5,13 @@ import { Router } from '@angular/router';
 import { Usuario } from '../../models/usuario.models';
 import { ApiService } from '../../service/api.service';
 import { Especialidad } from '../../models/especialidad.models';
+import { Cita } from '../../models/cita.models';
+
+interface Horario {
+  dia_semana: string;
+  hora_inicio: string;
+  hora_fin: string;
+}
 
 @Component({
   selector: 'app-loginadmin',
@@ -17,12 +24,39 @@ export class LoginadminComponent implements OnInit {
   usuarioseleccionado: Usuario | null = null;
   editando: boolean = false;
   usuarios: any[] = [];
+  usuariosFiltrados: any[] = [];
+  filtroTipo: string = 'todos';
   esAdmin: boolean = false;
+
+  diasSemana = [
+    { value: 'lunes', label: 'Lunes' },
+    { value: 'martes', label: 'Martes' },
+    { value: 'miércoles', label: 'Miércoles' },
+    { value: 'jueves', label: 'Jueves' },
+    { value: 'viernes', label: 'Viernes' },
+    { value: 'sábado', label: 'Sábado' },
+    { value: 'domingo', label: 'Domingo' }
+  ];
 
   // ===== MÉDICO =====
   mostrarModalMedico: boolean = false;
   especialidades: Especialidad[] = [];
-  nuevoMedico: any = {
+  citas: any[] = [];
+
+  nuevoMedico: {
+    usuario: {
+      nombre: string;
+      apellido: string;
+      username: string;
+      password: string;
+      dni: string;
+      email: string;
+      telefono: string;
+      tipo_usuario: string;
+    };
+    especialidad: number | null;
+    horarios: Horario[];
+  } = {
     usuario: {
       nombre: '',
       apellido: '',
@@ -34,7 +68,11 @@ export class LoginadminComponent implements OnInit {
       tipo_usuario: 'medico'
     },
     especialidad: null,
-    horario_libre: ''
+    horarios: this.diasSemana.map(dia => ({
+      dia_semana: dia.value,
+      hora_inicio: '',
+      hora_fin: ''
+    }))
   };
 
   // ===== ESPECIALIDAD =====
@@ -66,13 +104,36 @@ export class LoginadminComponent implements OnInit {
       alert('No tienes permisos para acceder a esta página');
       this.router.navigate(['/login']);
     }
+    this.cargarCitas();
+  }
+
+  cargarCitas() {
+    this.apiservice.getCitas().subscribe({
+      next: (data) => {
+        this.citas = data;
+      },
+      error: (err) => {
+        console.error("Error al cargar citas: ", err);
+      }
+    });
   }
 
   cargarUsuarios(): void {
     this.http.get<any[]>('http://127.0.0.1:8000/api/usuario/').subscribe({
-      next: data => this.usuarios = data,
+      next: data => {
+        this.usuarios = data;
+        this.filtrarUsuarios();  // Aplicar filtro tras cargar
+      },
       error: err => console.error('Error al cargar usuarios:', err)
     });
+  }
+
+  filtrarUsuarios() {
+    if (this.filtroTipo === 'todos') {
+      this.usuariosFiltrados = this.usuarios;
+    } else {
+      this.usuariosFiltrados = this.usuarios.filter(u => u.tipo_usuario === this.filtroTipo);
+    }
   }
 
   verUsuario(usuario: any): void {
@@ -110,9 +171,7 @@ export class LoginadminComponent implements OnInit {
   eliminarUsuario(id: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
       this.http.delete(`http://127.0.0.1:8000/api/usuario/${id}/`).subscribe({
-        next: () => {
-          this.cargarUsuarios();
-        },
+        next: () => this.cargarUsuarios(),
         error: err => console.error('Error al eliminar:', err)
       });
     }
@@ -146,25 +205,60 @@ export class LoginadminComponent implements OnInit {
         tipo_usuario: 'medico'
       },
       especialidad: null,
-      horario_libre: ''
+      horarios: this.diasSemana.map(dia => ({
+        dia_semana: dia.value,
+        hora_inicio: '',
+        hora_fin: ''
+      }))
     };
   }
 
   registrarMedico() {
-    if (!this.nuevoMedico.usuario.username || !this.nuevoMedico.usuario.password || !this.nuevoMedico.especialidad) {
+    const usuarioData = this.nuevoMedico.usuario;
+
+    if (!usuarioData.username || !usuarioData.password || !this.nuevoMedico.especialidad) {
       alert('Completa los campos obligatorios');
       return;
     }
 
-    this.apiservice.postMedico(this.nuevoMedico).subscribe({
-      next: () => {
-        alert('Médico registrado correctamente');
-        this.cerrarModalMedico();
-        this.cargarUsuarios();
+    this.apiservice.postUsuario(usuarioData).subscribe({
+      next: (usuarioCreado) => {
+        if (!usuarioCreado?.id) {
+          alert("Error: El ID del usuario no está disponible.");
+          return;
+        }
+
+        const medicoData = {
+          usuario: usuarioCreado.id,
+          especialidad: this.nuevoMedico.especialidad
+        };
+
+        this.apiservice.postMedico(medicoData).subscribe({
+          next: (medicoCreado) => {
+            const horariosValidos = this.nuevoMedico.horarios.filter(h =>
+              h.hora_inicio && h.hora_fin && h.hora_inicio < h.hora_fin
+            );
+
+            horariosValidos.forEach(horario => {
+              const horarioData = {
+                medico: medicoCreado.id,
+                dia_semana: horario.dia_semana,
+                hora_inicio: horario.hora_inicio,
+                hora_final: horario.hora_fin
+              };
+              this.apiservice.postHorario(horarioData).subscribe({
+                error: err => console.error('Error al registrar horario:', err)
+              });
+            });
+
+            alert('Médico y horarios registrados correctamente');
+            this.cerrarModalMedico();
+            this.cargarUsuarios();
+          },
+          error: () => alert('Error al registrar médico')
+        });
       },
-      error: () => {
-        alert('Error al registrar médico');
-      }
+      error: () => alert('Error al registrar usuario')
     });
   }
 
@@ -180,11 +274,9 @@ export class LoginadminComponent implements OnInit {
         alert('Especialidad registrada correctamente');
         this.mostrarFormularioEspecialidad = false;
         this.nuevaEspecialidad = { id: 0, nombre: '', descripcion: '' };
-        this.apiservice.getEspecialidades().subscribe(data => this.especialidades = data); // refresca lista
+        this.apiservice.getEspecialidades().subscribe(data => this.especialidades = data);
       },
-      error: () => {
-        alert('Error al registrar especialidad');
-      }
+      error: () => alert('Error al registrar especialidad')
     });
   }
 
@@ -192,4 +284,6 @@ export class LoginadminComponent implements OnInit {
     this.mostrarFormularioEspecialidad = false;
     this.nuevaEspecialidad = { id: 0, nombre: '', descripcion: '' };
   }
+
+
 }

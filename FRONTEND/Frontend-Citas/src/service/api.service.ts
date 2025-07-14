@@ -41,9 +41,12 @@ export class ApiService {
     );
     }
 
-    public postUsuario(Usuario:Usuario): Observable<Usuario>{
-        let body = JSON.stringify(Usuario);
-        return this.http.post<Usuario>(this.ApiUrl + 'usuario/',body,this.httpOptions);
+    public postUsuario(usuario: Usuario): Observable<Usuario> {
+        return this.http.post<Usuario>(
+            this.ApiUrl + 'usuario/',
+            usuario,
+            this.httpOptions
+        );
     }
 
     // =============================== PACIENTE ================================
@@ -189,5 +192,15 @@ export class ApiService {
         let body = JSON.stringify(admin);
         return this.http.post<Administrador>(this.ApiUrl + 'administrador/', body, this.httpOptions);
     }
+
+
+    postHorario(horario: any): Observable<any> {
+    return this.http.post<any>(this.ApiUrl + 'horario/', horario, this.httpOptions);
+    }
+
+    getHorasDisponibles(fecha: string, medicoId: number) {
+    return this.http.get<any>(`http://127.0.0.1:8000/api/cita/horas-disponibles/?fecha=${fecha}&medico_id=${medicoId}`);
+    }
+    
 
 }

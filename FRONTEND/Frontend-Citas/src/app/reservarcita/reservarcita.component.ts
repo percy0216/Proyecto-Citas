@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApiService } from '../../service/api.service'; 
+import { ApiService } from '../../service/api.service';
 
 @Component({
   selector: 'app-reservarcita',
@@ -13,11 +13,11 @@ export class ReservarCitaComponent implements OnInit {
 
   especialidades: any[] = [];
   medicos: any[] = [];
+  horasDisponibles: string[] = [];
 
   constructor(private fb: FormBuilder, private api: ApiService) {}
 
   ngOnInit(): void {
-
     this.api.getPacienteId().subscribe({
       next: (res) => {
         localStorage.setItem('paciente_id', res.paciente_id);
@@ -28,13 +28,23 @@ export class ReservarCitaComponent implements OnInit {
       }
     });
 
+    // Inicializa el formulario con validaciones
     this.reservaForm = this.fb.group({
       especialidad: ['', Validators.required],
       medico: ['', Validators.required],
-      fecha: ['', Validators.required]
+      fecha: ['', Validators.required],
+      hora: ['', Validators.required]  // ✅ nuevo campo
     });
 
     this.obtenerEspecialidades();
+
+    // ✅ Cargar horas disponibles al cambiar médico o fecha
+    this.reservaForm.get('fecha')?.valueChanges.subscribe(() => {
+      this.cargarHorasDisponibles();
+    });
+    this.reservaForm.get('medico')?.valueChanges.subscribe(() => {
+      this.cargarHorasDisponibles();
+    });
   }
 
   obtenerEspecialidades() {
@@ -54,6 +64,25 @@ export class ReservarCitaComponent implements OnInit {
     }
   }
 
+  // ✅ Cargar horas disponibles según médico y fecha
+  cargarHorasDisponibles() {
+    const fecha = this.reservaForm.get('fecha')?.value;
+    const medicoId = this.reservaForm.get('medico')?.value;
+
+    if (fecha && medicoId) {
+      this.api.getHorasDisponibles(fecha, medicoId).subscribe({
+        next: (res) => {
+          this.horasDisponibles = res.horas || [];
+          this.reservaForm.get('hora')?.setValue('');
+        },
+        error: (err) => {
+          console.error('Error al obtener horas disponibles:', err);
+          this.horasDisponibles = [];
+        }
+      });
+    }
+  }
+
   reservarCita() {
     if (this.reservaForm.valid) {
       const pacienteIdStr = localStorage.getItem('paciente_id');
@@ -66,7 +95,7 @@ export class ReservarCitaComponent implements OnInit {
 
       const cita = {
         fecha: this.reservaForm.value.fecha,
-        hora: '08:00', 
+        hora: this.reservaForm.value.hora, // ✅ usar hora seleccionada
         especialidad: this.reservaForm.value.especialidad,
         paciente: pacienteId,
         medico: this.reservaForm.value.medico
@@ -77,6 +106,7 @@ export class ReservarCitaComponent implements OnInit {
           alert('¡Cita reservada con éxito!');
           this.reservaForm.reset();
           this.medicos = [];
+          this.horasDisponibles = [];
         },
         error: (err) => {
           console.error('Error al reservar cita:', err);
@@ -85,5 +115,4 @@ export class ReservarCitaComponent implements OnInit {
       });
     }
   }
-
 }

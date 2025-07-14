@@ -67,6 +67,26 @@
           </div>
         </div>
       </div>
+      <!-- Hora -->
+      <div class="action-card" *ngIf="horasDisponibles.length > 0">
+        <div class="card-content">
+          <div class="card-icon scheduled">
+            <i class="pi pi-clock"></i>
+          </div>
+          <div class="card-text">
+            <label>Hora</label><br />
+            <select formControlName="hora" class="custom-select">
+              <option value="" disabled selected>Seleccione una hora</option>
+              <option *ngFor="let hora of horasDisponibles" [value]="hora">{{ hora }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Si no hay horas disponibles -->
+      <div *ngIf="horasDisponibles.length === 0 && reservaForm.get('fecha')?.value && reservaForm.get('medico')?.value" class="text-alert">
+        <p style="color: red; margin-left: 1rem;">No hay horas disponibles para esta fecha y médico.</p>
+</div>
 
       <!-- Botón -->
       <button type="submit" class="primary-btn" [disabled]="reservaForm.invalid">

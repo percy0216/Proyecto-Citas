@@ -6,7 +6,7 @@
       </div>
       <div class="welcome-text">
         <h1 class="welcome-title">Mi perfil</h1>
-        <span class="user-name">{{ perfilForm.get('first_name')?.value }} {{ perfilForm.get('last_name')?.value }}</span>
+        <span class="user-name">{{ perfilForm.get('nombre')?.value }} {{ perfilForm.get('apellido')?.value }}</span>
       </div>
     </div>
     <button class="logout-btn" (click)="cerrarSesion()">
@@ -54,10 +54,10 @@
       <div class="card-text">
         <label>Nombre</label><br />
         <ng-container *ngIf="!modoEdicion; else editFirstName">
-          {{ perfilForm.get('first_name')?.value || 'No registrado' }}
+          {{ perfilForm.get('nombre')?.value || 'No registrado' }}
         </ng-container>
         <ng-template #editFirstName>
-          <input type="text" pInputText formControlName="first_name" />
+          <input type="text" pInputText formControlName="nombre" />
         </ng-template>
       </div>
     </div>
@@ -72,10 +72,10 @@
       <div class="card-text">
         <label>Apellido</label><br />
         <ng-container *ngIf="!modoEdicion; else editLastName">
-          {{ perfilForm.get('last_name')?.value || 'No registrado' }}
+          {{ perfilForm.get('apellido')?.value || 'No registrado' }}
         </ng-container>
         <ng-template #editLastName>
-          <input type="text" pInputText formControlName="last_name" />
+          <input type="text" pInputText formControlName="apellido" />
         </ng-template>
       </div>
     </div>
