@@ -19,10 +19,22 @@ export class LoginComponent {
   login() {
     this.auth.login(this.username, this.password).subscribe({
       next: (res: any) => {
-         console.log('Respuesta del backend:', res);
+        console.log('Respuesta del backend:', res);
         localStorage.setItem('token', res.token);
-        this.router.navigate(['/home']);
+        localStorage.setItem('usuario', JSON.stringify(res.usuario));
+
+        const tipo = res.usuario.tipo_usuario;
+
+        if (tipo === 'admin') {
+          this.router.navigate(['/panel-admin-9472']);
+        } else if (tipo === 'medico') {
+          
+          this.router.navigate(['/home']); 
+        } else {
+          this.router.navigate(['/home']);
+        }
       },
+
       error: () => {
         this.error = 'Usuario y/o contraseña incorrectos';
       }

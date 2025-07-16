@@ -33,20 +33,30 @@ export class ApiService {
         return this.http.delete<void>(this.ApiUrl + 'usuario/' + id + "/");
     }
 
-    public putUsuario(usuario:Usuario): Observable<Usuario>{
-        let body = JSON.stringify(usuario);
-        return this.http.put<Usuario>(this.ApiUrl + 'usuario/' + usuario.id + "/",body,this.httpOptions);
+    public putUsuario(usuario: Usuario): Observable<Usuario> {
+    return this.http.put<Usuario>(
+        this.ApiUrl + 'usuario/' + usuario.id + '/',
+        usuario,
+        this.httpOptions
+    );
     }
 
-    public postUsuario(Usuario:Usuario): Observable<Usuario>{
-        let body = JSON.stringify(Usuario);
-        return this.http.post<Usuario>(this.ApiUrl + 'usuario/',body,this.httpOptions);
+    public postUsuario(usuario: Usuario): Observable<Usuario> {
+        return this.http.post<Usuario>(
+            this.ApiUrl + 'usuario/',
+            usuario,
+            this.httpOptions
+        );
     }
 
     // =============================== PACIENTE ================================
     
     public getPacientes(): Observable<Paciente[]> {
         return this.http.get<Paciente[]>(this.ApiUrl + 'paciente/');
+    }
+
+    public getPacienteId(): Observable<any> {
+    return this.http.get<any>(this.ApiUrl + 'paciente-id/');
     }
 
     public deletePaciente(id: string): Observable<void> {
@@ -84,8 +94,12 @@ export class ApiService {
     }
 
     // =============================== MEDICO ================================
-    public getMedicos(): Observable<Medico[]> {
-        return this.http.get<Medico[]>(this.ApiUrl + 'medico/');
+    public getMedicos(especialidadId?: number): Observable<any[]> {
+    const url = especialidadId
+        ? `${this.ApiUrl}medico/?especialidad=${especialidadId}`
+        : `${this.ApiUrl}medico/`;
+        
+    return this.http.get<any[]>(url);
     }
 
     public deleteMedico(id: string): Observable<void> {
@@ -118,8 +132,8 @@ export class ApiService {
     }
 
     public postEspecialidad(especialidad: Especialidad): Observable<Especialidad> {
-        let body = JSON.stringify(especialidad);
-        return this.http.post<Especialidad>(this.ApiUrl + 'especialidad/', body, this.httpOptions);
+    let body = JSON.stringify(especialidad);
+    return this.http.post<Especialidad>(this.ApiUrl + 'especialidad/', body, this.httpOptions);
     }
 
     // =============================== REGISTRO VISITAS================================
@@ -178,5 +192,15 @@ export class ApiService {
         let body = JSON.stringify(admin);
         return this.http.post<Administrador>(this.ApiUrl + 'administrador/', body, this.httpOptions);
     }
+
+
+    postHorario(horario: any): Observable<any> {
+    return this.http.post<any>(this.ApiUrl + 'horario/', horario, this.httpOptions);
+    }
+
+    getHorasDisponibles(fecha: string, medicoId: number) {
+    return this.http.get<any>(`http://127.0.0.1:8000/api/cita/horas-disponibles/?fecha=${fecha}&medico_id=${medicoId}`);
+    }
+    
 
 }

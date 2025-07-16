@@ -14,6 +14,8 @@ class UsuarioManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
+        
+    
     def create_superuser(self,username,email,password=None,**extra_fields):
         #Creamos un superusario en base a nombre de usuario, contraseña y correo
         extra_fields.setdefault('is_staff', True)
@@ -88,13 +90,12 @@ class Especialidad(models.Model):
 class Medico(models.Model):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     especialidad = models.ForeignKey(Especialidad, on_delete=models.CASCADE)
-    horario_libre = models.TextField(blank=True, null=True)
+    
+    # Ya no se necesita horario_libre: lo quitamos
 
-    # Devuelve todas las citas asignadas al médico
     def ver_citas_asignadas(self):
         return self.cita_set.all()
 
-    # Registra la atención a un paciente y actualiza el estado de la cita
     def registrar_atencion(self, cita, observaciones):
         HistorialMedico.objects.create(paciente=cita.paciente, observaciones=observaciones)
         cita.estado = 'atendida'
@@ -102,6 +103,26 @@ class Medico(models.Model):
 
     def __str__(self):
         return self.usuario.nombre
+    
+DIAS_SEMANA = [
+    ('lunes', 'Lunes'),
+    ('martes', 'Martes'),
+    ('miércoles', 'Miércoles'),
+    ('jueves', 'Jueves'),
+    ('viernes', 'Viernes'),
+    ('sábado', 'Sábado'),
+    ('domingo', 'Domingo'),
+]
+
+class Horario(models.Model):
+    medico = models.ForeignKey(Medico, on_delete=models.CASCADE)
+    dia_semana = models.CharField(max_length=10, choices=DIAS_SEMANA)
+    hora_inicio = models.TimeField() 
+    hora_final = models.TimeField()
+
+    def __str__(self):
+        return f"{self.medico} - {self.dia_semana} ({self.hora_inicio} - {self.hora_final})"
+
 
 
 # Representa una cita médica entre un paciente y un médico.
@@ -164,3 +185,7 @@ class HistorialMedico(models.Model):
     observaciones = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
 
+
+# class UnidadMedida(models.Model):
+#     unidad = models.CharField(max_length=20)
+#     sigla = models.CharField(max_length=5)
