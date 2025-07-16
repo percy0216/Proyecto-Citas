@@ -1,4 +1,4 @@
-Proyecto Reserva de Citas 2025-1
+# Proyecto Reserva de Citas 2025-1
 
 ¡Bienvenido al proyecto de citas! Este README te guiará a través de la configuración y ejecución de las partes frontend (Angular) y backend (Django).
 
