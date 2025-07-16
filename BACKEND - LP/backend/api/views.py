@@ -17,7 +17,13 @@ from django.utils import timezone
 from rest_framework.decorators import action
 from rest_framework import status, viewsets
 import requests
-
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from django.utils.dateparse import parse_date
+from datetime import datetime, time, timedelta
+from . import models, serializers
 
 class ReservarCitaView(APIView):
     permission_classes = [IsAuthenticated]
@@ -124,27 +130,19 @@ class HorarioViewSets(viewsets.ModelViewSet):
     filterset_fields = ['medico', 'dia_semana']
 
 
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
-from django.utils.dateparse import parse_date
-from datetime import datetime, time, timedelta
-
-from . import models, serializers
-
 class CitaViewsets(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
+        hoy = date.today()  # ← Esto es necesario
 
         if user.tipo_usuario == 'admin':
             return models.Cita.objects.all()
 
         try:
             paciente = models.Paciente.objects.get(usuario=user)
-            return models.Cita.objects.filter(paciente=paciente)
+            return models.Cita.objects.filter(paciente=paciente, fecha__gte=hoy)
         except models.Paciente.DoesNotExist:
             return models.Cita.objects.none()
 
